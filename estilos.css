@@ -1424,24 +1424,25 @@ body:has(.btn-flecha:hover) .cursor-ring {
         overflow-y: auto;
         perspective: none;
         perspective-origin: unset;
-        /* cursor: none se mantiene pero en móvil no se ve */
     }
 
-   /* ── Cámara: fluye con el contenido, sin animación de flotado ── */
+    /* ── Cámara: fluye con el contenido, rompe el flex-row ── */
     .camara-cinematografica {
+        display: block;
         height: auto;
-        min-height: 100svh;   /* svh = safe viewport height en iOS Safari */
-        align-items: center;  /* CORREGIDO: de flex-start a center */
+        min-height: 100svh;
         animation: none;
         transform: none !important;
         transform-style: flat;
     }
 
-    /* ── Tilt wrapper: plano, sin 3D ── */
+    /* ── Tilt wrapper: convertimos a Grid para apilar pantallas ── */
     .tilt-wrapper {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
         height: auto;
         min-height: 100svh;
-        align-items: center;  /* CORREGIDO: de flex-start a center */
         transform: none !important;
         transform-style: flat;
         overflow: visible;
@@ -1449,11 +1450,13 @@ body:has(.btn-flecha:hover) .cursor-ring {
 
     /* ── Pantalla login: columna scrollable centrada ── */
     .pantalla {
+        grid-area: 1 / 1;
+        width: 100%;
         position: relative;
         height: auto;
         min-height: 100svh;
         padding: 48px 22px 64px;
-        justify-content: center; /* CORREGIDO: centra el contenido con el orbe */
+        justify-content: center;
         gap: 18px;
         transform: none !important;
         transform-style: flat;
@@ -1463,11 +1466,11 @@ body:has(.btn-flecha:hover) .cursor-ring {
     /* ── Título: altura mínima para evitar saltos al escribir ── */
     .titulo-elegante {
         font-size: clamp(1.2rem, 4.5vw, 1.8rem);
-        min-height: 90px;        /* CORREGIDO: evita el salto del efecto Typewriter */
+        min-height: 90px;
         margin-bottom: 8px;
         transform: none !important;
     }
-   
+
     /* ── Neutralizar translateZ en todos los hijos del login ── */
     .pistas-container,
     .huella-container,
@@ -1481,8 +1484,6 @@ body:has(.btn-flecha:hover) .cursor-ring {
     .pistas-container {
         max-width: 100%;
         margin-bottom: 8px;
-        /* La opacidad y transform la maneja el JS;
-           aquí solo garantizamos que el transform final sea "none" en vez de translateZ */
     }
     .pista-lista {
         font-size: 1rem;
@@ -1507,8 +1508,10 @@ body:has(.btn-flecha:hover) .cursor-ring {
         margin-bottom: 4px;
     }
 
-    /* ── Galería: también scrollable ── */
+    /* ── Galería: superpuesta mediante Grid ── */
     .pantalla-galeria {
+        grid-area: 1 / 1;
+        width: 100%;
         position: relative;
         height: auto;
         min-height: 100svh;
@@ -1549,4 +1552,5 @@ body:has(.btn-flecha:hover) .cursor-ring {
         width: 50px; height: 50px;
         font-size: 1.1rem;
     }
+}
 }
