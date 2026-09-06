@@ -1455,8 +1455,8 @@ body:has(.btn-flecha:hover) .cursor-ring {
         position: relative;
         height: auto;
         min-height: 100svh;
-        padding: 48px 22px 64px;
-        justify-content: center;
+        padding: 110px 22px 80px;
+        justify-content: flex-start;
         gap: 18px;
         transform: none !important;
         transform-style: flat;
@@ -1515,13 +1515,14 @@ body:has(.btn-flecha:hover) .cursor-ring {
         position: relative;
         height: auto;
         min-height: 100svh;
-        padding: 20px 0 100px;
+        padding: 100px 0 120px;
     }
 
     /* ── Carrusel: perspectiva reducida y tarjetas más pequeñas ── */
     .escena-3d {
         perspective: 700px;
         height: 400px;
+        margin-top: 24px;
     }
 
     .slot-tarjeta {
