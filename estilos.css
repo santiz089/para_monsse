@@ -1427,11 +1427,11 @@ body:has(.btn-flecha:hover) .cursor-ring {
         /* cursor: none se mantiene pero en móvil no se ve */
     }
 
-    /* ── Cámara: fluye con el contenido, sin animación de flotado ── */
+   /* ── Cámara: fluye con el contenido, sin animación de flotado ── */
     .camara-cinematografica {
         height: auto;
         min-height: 100svh;   /* svh = safe viewport height en iOS Safari */
-        align-items: flex-start;
+        align-items: center;  /* CORREGIDO: de flex-start a center */
         animation: none;
         transform: none !important;
         transform-style: flat;
@@ -1441,7 +1441,7 @@ body:has(.btn-flecha:hover) .cursor-ring {
     .tilt-wrapper {
         height: auto;
         min-height: 100svh;
-        align-items: flex-start;
+        align-items: center;  /* CORREGIDO: de flex-start a center */
         transform: none !important;
         transform-style: flat;
         overflow: visible;
@@ -1453,21 +1453,21 @@ body:has(.btn-flecha:hover) .cursor-ring {
         height: auto;
         min-height: 100svh;
         padding: 48px 22px 64px;
-        justify-content: flex-start;   /* alinea desde arriba → no corta en scroll */
+        justify-content: center; /* CORREGIDO: centra el contenido con el orbe */
         gap: 18px;
         transform: none !important;
         transform-style: flat;
         overflow: visible;
     }
 
-    /* ── Título: altura automática, sin min-height fija ── */
+    /* ── Título: altura mínima para evitar saltos al escribir ── */
     .titulo-elegante {
         font-size: clamp(1.2rem, 4.5vw, 1.8rem);
-        min-height: unset;             /* ← clave: quitamos el min-height de 80px */
+        min-height: 90px;        /* CORREGIDO: evita el salto del efecto Typewriter */
         margin-bottom: 8px;
         transform: none !important;
     }
-
+   
     /* ── Neutralizar translateZ en todos los hijos del login ── */
     .pistas-container,
     .huella-container,
