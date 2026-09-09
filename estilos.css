@@ -1,0 +1,2367 @@
+/* ════════════════════════════════════════════
+   VARIABLES & RESET
+════════════════════════════════════════════ */
+:root {
+    --vino:          #8B1E3F;
+    --rosa:          #C2185B;
+    --rosa-suave:    #F48FB1;
+    --gold:          #F5C842;
+    --gold-dim:      rgba(245, 200, 66, 0.35);
+    --tinta:         #2B2A28;
+    --nebula:        #5A1B6B;
+    --fondo:         #04000d;
+    --aurora-1:      #7B2FBE;
+    --aurora-2:      #C2185B;
+    --aurora-3:      #1B6CA8;
+
+    --font-elegante: 'Cormorant Garamond', serif;
+    --font-limpia:   'Montserrat', sans-serif;
+    --font-cursiva:  'Caveat', cursive;
+
+    --ease-premium:  cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring:   cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --ease-expo:     cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-bounce:   cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* Nuevas variables de la Fase 2 */
+    --accent-neon:    #ff3d70;
+    --accent-warm:    #ff8a2b;
+    --accent-violet:  #ac82ff;
+    --accent-mint:    #17e8a4;
+    --glass-bg:       rgba(255, 255, 255, 0.07);
+    --glass-blur:     blur(48px) saturate(200%) brightness(1.08);
+    --shadow-deep:    0 60px 120px -30px rgba(0,0,0,0.90), 0 20px 40px -10px rgba(0,0,0,0.65);
+    --shadow-card:    0 80px 160px -30px rgba(0,0,0,0.95), 0 30px 60px -10px rgba(0,0,0,0.70), 0 8px 20px rgba(0,0,0,0.50), inset 0 2px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(255,255,255,0.12);
+
+}
+
+*, *::before, *::after {
+    margin: 0; padding: 0; box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+body {
+    min-height: 100vh;
+    overflow: hidden;
+    font-family: var(--font-limpia);
+    background: var(--fondo);
+    perspective: 2000px;
+    perspective-origin: 50% 50%; /* centrar el punto de perspectiva */
+    color: #fff;
+    cursor: none;
+}
+
+/* ════════════════════════════════════════════
+   CURSOR PERSONALIZADO
+════════════════════════════════════════════ */
+.cursor-dot {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99999;
+    top: 0; left: 0;
+    transform: translate(-50%, -50%);
+    transition: transform 0.08s, background 0.3s, width 0.2s, height 0.2s;
+    box-shadow: 0 0 8px var(--gold), 0 0 20px rgba(245, 200, 66, 0.5);
+    will-change: transform;
+}
+
+.cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1.5px solid rgba(245, 200, 66, 0.6);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99998;
+    top: 0; left: 0;
+    transform: translate(-50%, -50%);
+    transition: transform 0.18s var(--ease-premium), width 0.3s, height 0.3s, border-color 0.3s, opacity 0.3s;
+    will-change: transform;
+}
+
+.cursor-trail {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 99997;
+    opacity: 0.5;
+}
+
+body:has(button:hover) .cursor-ring,
+body:has(input:hover) .cursor-ring,
+body:has(.tarjeta-interactiva:hover) .cursor-ring,
+body:has(.btn-flecha:hover) .cursor-ring {
+    width: 56px; height: 56px;
+    border-color: var(--rosa);
+    opacity: 0.8;
+}
+
+/* ════════════════════════════════════════════
+   COSMOS CANVAS & AURORA CANVAS
+════════════════════════════════════════════ */
+#cosmos-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: -9;
+    pointer-events: none;
+}
+
+#aurora-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: -7;
+    pointer-events: none;
+    opacity: 0.55;
+    mix-blend-mode: screen;
+}
+
+/* ════════════════════════════════════════════
+   NEBULOSAS DE FONDO
+════════════════════════════════════════════ */
+.bg-layer {
+    position: fixed; inset: 0; z-index: -10;
+}
+.bg-noche {
+    background: radial-gradient(ellipse at 50% 60%, #1a0030 0%, #0a0018 45%, var(--fondo) 100%);
+}
+
+.nebula-layer {
+    position: fixed; inset: 0; z-index: -8;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.nebula {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    will-change: transform, opacity;
+}
+
+.nebula-1 {
+    width: 70vw; height: 70vw;
+    background: radial-gradient(ellipse, rgba(90, 27, 107, 0.28) 0%, transparent 70%);
+    top: -20%; left: -15%;
+    animation: nebula-drift 25s ease-in-out infinite;
+}
+.nebula-2 {
+    width: 55vw; height: 55vw;
+    background: radial-gradient(ellipse, rgba(139, 30, 63, 0.22) 0%, transparent 70%);
+    bottom: -15%; right: -10%;
+    animation: nebula-drift 32s ease-in-out infinite reverse;
+}
+.nebula-3 {
+    width: 40vw; height: 40vw;
+    background: radial-gradient(ellipse, rgba(194, 24, 91, 0.14) 0%, transparent 70%);
+    top: 40%; left: 40%;
+    animation: nebula-pulse 18s ease-in-out infinite;
+}
+.nebula-4 {
+    width: 50vw; height: 30vw;
+    background: radial-gradient(ellipse, rgba(27, 108, 168, 0.1) 0%, transparent 70%);
+    top: 10%; right: 5%;
+    animation: nebula-drift 40s ease-in-out infinite;
+    filter: blur(120px);
+}
+
+@keyframes nebula-drift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33%       { transform: translate(5%, 3%) scale(1.05); }
+    66%       { transform: translate(-3%, 5%) scale(0.97); }
+}
+@keyframes nebula-pulse {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50%       { opacity: 1;   transform: scale(1.15); }
+}
+
+/* ════════════════════════════════════════════
+   PÉTALOS FLOTANTES
+════════════════════════════════════════════ */
+.petalo-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.petalo {
+    position: absolute;
+    top: -30px;
+    pointer-events: none;
+    opacity: 0;
+    will-change: transform, opacity;
+}
+
+/* ════════════════════════════════════════════
+   PORTAL DE TRANSICIÓN
+════════════════════════════════════════════ */
+.portal-overlay {
+    position: fixed; inset: 0;
+    z-index: 9000;
+    pointer-events: none;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+}
+
+.portal-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid;
+    opacity: 0;
+    transform: scale(0);
+    transition: none;
+}
+.portal-ring-1 {
+    width: 80px; height: 80px;
+    border-color: var(--gold);
+    box-shadow: 0 0 30px var(--gold), inset 0 0 30px rgba(245, 200, 66, 0.2);
+}
+.portal-ring-2 {
+    width: 160px; height: 160px;
+    border-color: var(--rosa-suave);
+    box-shadow: 0 0 40px var(--rosa);
+}
+.portal-ring-3 {
+    width: 270px; height: 270px;
+    border-color: rgba(123, 47, 190, 0.8);
+    box-shadow: 0 0 35px rgba(123, 47, 190, 0.5);
+}
+.portal-ring-4 {
+    width: 400px; height: 400px;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.portal-flash {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, #fff 0%, rgba(194, 24, 91, 0.3) 40%, transparent 70%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.portal-overlay.activo .portal-ring-1 {
+    animation: portal-expand-1 1.4s var(--ease-expo) forwards;
+}
+.portal-overlay.activo .portal-ring-2 {
+    animation: portal-expand-2 1.4s 0.08s var(--ease-expo) forwards;
+}
+.portal-overlay.activo .portal-ring-3 {
+    animation: portal-expand-3 1.4s 0.16s var(--ease-expo) forwards;
+}
+.portal-overlay.activo .portal-ring-4 {
+    animation: portal-expand-3 1.4s 0.24s var(--ease-expo) forwards;
+}
+.portal-overlay.activo .portal-flash {
+    animation: flash-color 0.5s 0.95s ease forwards;
+}
+
+@keyframes portal-expand-1 {
+    0%   { transform: scale(0);    opacity: 0; }
+    25%  { transform: scale(1);    opacity: 1; }
+    100% { transform: scale(70);   opacity: 0; }
+}
+@keyframes portal-expand-2 {
+    0%   { transform: scale(0);    opacity: 0; }
+    25%  { transform: scale(1);    opacity: 0.85; }
+    100% { transform: scale(55);   opacity: 0; }
+}
+@keyframes portal-expand-3 {
+    0%   { transform: scale(0);    opacity: 0; }
+    25%  { transform: scale(1);    opacity: 0.6; }
+    100% { transform: scale(42);   opacity: 0; }
+}
+@keyframes flash-color {
+    0%   { opacity: 0; }
+    40%  { opacity: 0.9; }
+    100% { opacity: 0; }
+}
+
+/* ════════════════════════════════════════════
+   ESTRUCTURA PRINCIPAL
+════════════════════════════════════════════ */
+.camara-cinematografica {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; height: 100vh;
+    animation: float-cam 20s ease-in-out infinite;
+    transform-style: preserve-3d;
+}
+@keyframes float-cam {
+    0%, 100% { transform: translateY(0)    rotate(0.15deg); }
+    50%       { transform: translateY(-7px) rotate(-0.15deg); }
+}
+
+.tilt-wrapper {
+    position: relative; width: 100%; height: 100%;
+    display: flex; justify-content: center; align-items: center;
+    transform-style: preserve-3d;
+}
+
+/* ════════════════════════════════════════════
+   PANTALLA LOGIN
+════════════════════════════════════════════ */
+.pantalla {
+    position: absolute; width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    transform-style: preserve-3d;
+    padding: 0 20px; text-align: center;
+    transition: opacity 1.4s var(--ease-premium), transform 1.4s var(--ease-premium);
+}
+.pantalla.oculto {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.88) translateZ(-120px);
+}
+
+/* Orbe decorativo del login */
+.orbe-login {
+    position: absolute;
+    width: 380px; height: 380px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(123, 47, 190, 0.12) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    animation: orbe-pulso 6s ease-in-out infinite;
+    z-index: 0;
+}
+@keyframes orbe-pulso {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+    50%       { transform: translate(-50%, -50%) scale(1.18); opacity: 1; }
+}
+
+/* ── Título con Typewriter ── */
+.titulo-elegante {
+    font-family: var(--font-elegante);
+    font-size: clamp(1.55rem, 3.2vw, 2.5rem);
+    font-weight: 400;
+    color: #f5d0e0;
+    margin-bottom: 24px;
+    max-width: 680px;
+    line-height: 1.3;
+    text-shadow: 0 2px 24px rgba(194, 24, 91, 0.4);
+    transform: translateZ(40px);
+    min-height: 80px;
+    letter-spacing: 0.01em;
+    position: relative; z-index: 1;
+}
+
+.cursor-texto {
+    display: inline-block;
+    color: var(--gold);
+    font-weight: 300;
+    animation: parpadear-cursor 0.9s step-end infinite;
+    margin-left: 2px;
+    opacity: 1;
+}
+.cursor-texto.oculto { animation: none; opacity: 0; }
+@keyframes parpadear-cursor {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+}
+
+/* ── Pistas ── */
+.pistas-container {
+    font-family: var(--font-elegante);
+    color: #e8d5f5;
+    max-width: 560px;
+    margin-bottom: 32px;
+    transform: translateZ(35px) translateY(14px);
+    opacity: 0;
+    transition: opacity 1.4s var(--ease-premium), transform 1.4s var(--ease-premium);
+    position: relative; z-index: 1;
+}
+.pista-intro {
+    font-size: 1.25rem;
+    font-style: italic;
+    margin-bottom: 14px;
+    color: var(--gold);
+    letter-spacing: 0.02em;
+}
+.pista-lista {
+    list-style: none;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 20px 30px 20px 36px;
+    border-radius: 18px;
+    backdrop-filter: blur(24px) saturate(150%);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.07),
+                0 0 0 1px rgba(245, 200, 66, 0.06);
+    position: relative;
+    overflow: hidden;
+}
+.pista-lista::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(245, 200, 66, 0.35), transparent);
+}
+.pista-lista::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(194, 24, 91, 0.25), transparent);
+}
+.pista-lista li {
+    margin-bottom: 14px;
+    position: relative;
+    padding-left: 22px;
+}
+.pista-lista li:last-child { margin-bottom: 0; }
+.pista-lista li::before {
+    content: '✦';
+    position: absolute;
+    left: 0;
+    color: var(--rosa);
+    font-size: 0.85rem;
+    top: 3px;
+}
+
+/* ── Huella Dactilar ── */
+.huella-container {
+    position: relative;
+    width: 112px; height: 112px;
+    border-radius: 24px;
+    background: linear-gradient(165deg, rgba(255,255,255,0.09), rgba(255,255,255,0.01) 55%);
+    backdrop-filter: blur(30px) saturate(160%);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.65),
+                inset 0 1px 0 rgba(255,255,255,0.12),
+                inset 0 -1px 0 rgba(0,0,0,0.2);
+    display: flex; justify-content: center; align-items: center;
+    margin-bottom: 28px;
+    transform: translateZ(52px);
+    overflow: hidden;
+    transition: box-shadow 0.5s var(--ease-premium),
+                background 0.5s,
+                border-color 0.5s;
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    z-index: 1;
+}
+
+/* Anillos de órbita decorativos en la huella */
+.orbita-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px dashed rgba(245, 200, 66, 0.12);
+    pointer-events: none;
+}
+.o-ring-1 { width: 140px; height: 140px; left: 50%; top: 50%; transform: translate(-50%, -50%); animation: girar-orbita 12s linear infinite; }
+.o-ring-2 { width: 175px; height: 175px; left: 50%; top: 50%; transform: translate(-50%, -50%); animation: girar-orbita 18s linear infinite reverse; }
+@keyframes girar-orbita { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+.huella-container::before {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    pointer-events: none;
+    background: linear-gradient(135deg,
+        rgba(255,255,255,0.35),
+        transparent 30%,
+        transparent 70%,
+        rgba(255,255,255,0.12));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: 10;
+}
+
+.huella-bg-pulse {
+    position: absolute; inset: -20px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(194, 24, 91, 0.18), transparent 70%);
+    animation: pulso-fondo 2.5s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+@keyframes pulso-fondo {
+    0%, 100% { transform: scale(0.8); opacity: 0.4; }
+    50%       { transform: scale(1.2); opacity: 1; }
+}
+
+.huella-svg {
+    width: 64px; height: 64px;
+    position: relative; z-index: 2;
+    transition: color 0.5s, opacity 0.4s, transform 0.4s;
+    color: #f5a0c8;
+}
+.huella-svg path {
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 7;
+    stroke-linecap: round;
+}
+
+/* Laser escaner */
+.escaner-laser {
+    position: absolute; left: 0; width: 100%; height: 3px;
+    background: linear-gradient(90deg,
+        transparent,
+        var(--rosa) 20%,
+        rgba(255,255,255,0.9) 50%,
+        var(--rosa) 80%,
+        transparent);
+    box-shadow: 0 0 18px 6px rgba(194, 24, 91, 0.55),
+                0 0 4px 1px rgba(255,255,255,0.5);
+    top: 15%; opacity: 0; z-index: 4;
+}
+.scan-particles { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+
+/* ── Estados de la Huella ── */
+.huella-container.escaneando {
+    border-color: rgba(194, 24, 91, 0.5);
+    box-shadow: 0 0 0 2px rgba(194, 24, 91, 0.25),
+                0 8px 40px rgba(194, 24, 91, 0.35),
+                0 0 60px rgba(194, 24, 91, 0.12);
+}
+.huella-container.escaneando .escaner-laser {
+    opacity: 1;
+    animation: barrido 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.huella-container.escaneando .huella-svg {
+    color: var(--rosa);
+    filter: drop-shadow(0 0 10px rgba(194, 24, 91, 0.8));
+}
+@keyframes barrido {
+    0%   { top: 8%;  opacity: 0; }
+    8%   { opacity: 1; }
+    50%  { top: 88%; }
+    92%  { opacity: 1; }
+    100% { top: 8%;  opacity: 0; }
+}
+
+.latido-ring {
+    position: absolute;
+    width: 68px; height: 68px;
+    border-radius: 50%;
+    border: 1.5px solid var(--rosa);
+    opacity: 0; z-index: 1;
+    animation: latido 2.4s ease-out infinite;
+}
+@keyframes latido {
+    0%   { transform: scale(0.6); opacity: 0.6; }
+    100% { transform: scale(2.4); opacity: 0; }
+}
+.huella-container.escaneando .latido-ring,
+.huella-container.aprobado  .latido-ring { animation-play-state: paused; opacity: 0; }
+
+/* Checkmark */
+.check-aprobado {
+    position: absolute; width: 44px; height: 44px;
+    z-index: 3; opacity: 0;
+    transform: scale(0.5) rotate(-20deg);
+    transition: opacity 0.4s, transform 0.5s var(--ease-bounce);
+    pointer-events: none;
+}
+.check-aprobado circle { fill: none; stroke: #4ade80; stroke-width: 2.5; stroke-dasharray: 132; stroke-dashoffset: 132; }
+.check-aprobado path  { fill: none; stroke: #4ade80; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 24; stroke-dashoffset: 24; }
+
+.huella-container.aprobado .check-aprobado {
+    opacity: 1; transform: scale(1) rotate(0deg);
+}
+.huella-container.aprobado .check-aprobado circle {
+    animation: dibujar-check 0.5s ease forwards;
+}
+.huella-container.aprobado .check-aprobado path {
+    animation: dibujar-check 0.35s 0.4s ease forwards;
+}
+@keyframes dibujar-check { to { stroke-dashoffset: 0; } }
+
+.huella-container.aprobado .huella-svg { opacity: 0; transform: scale(0.6) rotate(15deg); }
+.huella-container.aprobado {
+    border-color: rgba(74, 222, 128, 0.6) !important;
+    background: rgba(74, 222, 128, 0.1);
+    box-shadow: 0 0 0 2px rgba(74,222,128,0.3), 0 0 45px rgba(74,222,128,0.22) !important;
+}
+.huella-container.aprobado .escaner-laser { display: none; }
+
+.huella-container.error {
+    border-color: rgba(239, 68, 68, 0.7) !important;
+    animation: vibrar 0.42s ease !important;
+    box-shadow: 0 0 0 2px rgba(239,68,68,0.4), 0 0 30px rgba(239,68,68,0.25) !important;
+}
+@keyframes vibrar {
+    0%, 100% { transform: translateZ(52px) translateX(0); }
+    15%       { transform: translateZ(52px) translateX(-8px) rotate(-1deg); }
+    30%       { transform: translateZ(52px) translateX(8px) rotate(1deg); }
+    45%       { transform: translateZ(52px) translateX(-6px); }
+    60%       { transform: translateZ(52px) translateX(6px); }
+    75%       { transform: translateZ(52px) translateX(-3px); }
+    90%       { transform: translateZ(52px) translateX(3px); }
+}
+
+/* ── Input Password ── */
+.input-wrapper {
+    position: relative;
+    width: 340px;
+    max-width: 90vw;
+    margin-bottom: 18px;
+    transform: translateZ(32px);
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    z-index: 1;
+}
+.input-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+}
+.input-wrapper:focus-within .input-icon { opacity: 1; }
+
+.input-pass-glass {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(24px);
+    border: 1.5px solid rgba(245, 160, 200, 0.18);
+    padding: 15px 28px 15px 46px;
+    border-radius: 40px;
+    text-align: left;
+    font-family: var(--font-limpia);
+    font-size: 1rem;
+    letter-spacing: 0.12em;
+    color: #f5d0e0;
+    outline: none;
+    transition: background 0.35s, border-color 0.35s, box-shadow 0.35s;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4),
+                inset 0 1px 0 rgba(255,255,255,0.07);
+}
+.input-pass-glass::placeholder { color: rgba(245, 208, 224, 0.3); letter-spacing: 0.05em; }
+.input-pass-glass:focus {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(194, 24, 91, 0.6);
+    box-shadow: 0 0 0 3px rgba(194, 24, 91, 0.18),
+                0 8px 30px rgba(0,0,0,0.4),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+.input-progress-bar {
+    position: absolute;
+    bottom: -3px; left: 50%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--rosa), var(--gold), var(--rosa-suave));
+    background-size: 200% 100%;
+    animation: shimmer-bar 2s linear infinite;
+    border-radius: 2px;
+    width: 0%;
+    transform: translateX(-50%);
+    transition: width 0.4s var(--ease-premium), opacity 0.3s;
+    box-shadow: 0 0 10px rgba(245, 200, 66, 0.6);
+    opacity: 0;
+}
+@keyframes shimmer-bar {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+.input-glow {
+    position: absolute;
+    bottom: -15px; left: 50%;
+    transform: translateX(-50%);
+    width: 60%; height: 20px;
+    background: radial-gradient(ellipse, rgba(194, 24, 91, 0.35), transparent 70%);
+    filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+}
+
+/* ── Estado y Dots ── */
+.estado-login {
+    font-size: 0.76rem;
+    color: #b8a8c4;
+    transform: translateZ(22px);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0;
+    transition: color 0.4s, opacity 0.8s;
+    z-index: 1;
+}
+.login-dots {
+    display: flex; gap: 7px;
+    margin-top: 12px;
+    transform: translateZ(22px);
+    opacity: 0;
+    transition: opacity 0.8s;
+    z-index: 1;
+}
+.login-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    transition: background 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+.login-dot.activo {
+    background: var(--rosa);
+    box-shadow: 0 0 10px var(--rosa), 0 0 20px rgba(194, 24, 91, 0.45);
+    transform: scale(1.35);
+}
+
+/* ════════════════════════════════════════════
+   PANTALLA GALERÍA
+════════════════════════════════════════════ */
+.pantalla-galeria {
+    position: absolute; width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    transition: opacity 1.6s var(--ease-premium);
+    z-index: 100;
+}
+.pantalla-galeria.oculto { opacity: 0; pointer-events: none; }
+
+/* Lluvia de corazones */
+.lluvia-corazones {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+
+/* Título galería */
+.titulo-sorpresa {
+    font-family: var(--font-elegante);
+    font-size: clamp(2.2rem, 5.5vw, 3.8rem);
+    color: #FFF;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    text-shadow: 0 0 20px rgba(245, 200, 66, 0.95),
+                 0 0 50px rgba(245, 200, 66, 0.45),
+                 0 0 90px rgba(194, 24, 91, 0.35);
+    margin-bottom: 6px;
+    transform: translateZ(52px);
+    display: flex; gap: 0.02em;
+    z-index: 5;
+}
+.titulo-sorpresa span {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(32px) scale(0.7) rotate(-8deg);
+    transition: opacity 0.5s, transform 0.6s var(--ease-bounce);
+}
+.titulo-sorpresa.visible span { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+
+/* Subtítulo galería */
+.subtitulo-galeria {
+    font-family: var(--font-elegante);
+    font-size: 1.05rem;
+    color: rgba(245, 208, 224, 0.55);
+    letter-spacing: 0.06em;
+    margin-bottom: 18px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 1s 1.2s ease, transform 1s 1.2s ease;
+    z-index: 5;
+}
+.subtitulo-galeria.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Partículas flotantes de la galería */
+.galeria-particles {
+    position: absolute; inset: 0;
+    pointer-events: none; z-index: 0;
+    overflow: hidden;
+}
+
+/* Reflejo de suelo */
+.floor-reflection {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 25%;
+    background: linear-gradient(to top, rgba(245, 200, 66, 0.05), transparent);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ════════════════════════════════════════════
+   CARRUSEL 3D
+════════════════════════════════════════════ */
+.escena-3d {
+    perspective: 1100px;
+    width: 100%; max-width: 320px; height: 450px;
+    position: relative;
+    display: flex; justify-content: center; align-items: center;
+    z-index: 10;
+}
+
+.carrusel {
+    width: 100%; height: 100%;
+    position: absolute;
+    transform-style: preserve-3d;
+    transition: transform 0.88s cubic-bezier(0.2, 0.82, 0.2, 1);
+    will-change: transform;
+}
+
+.slot-tarjeta {
+    position: absolute;
+    width: 280px; height: 420px;
+    left: 50%; top: 50%;
+    margin-left: -140px; margin-top: -210px;
+    transform-style: preserve-3d;
+    transform: rotateY(calc(var(--i) * 72deg)) translateZ(285px);
+    /* translateZ se ajusta en móvil via media query */
+}
+
+/* ── Físicas de la Tarjeta ── */
+.tarjeta-squash {
+    width: 100%; height: 100%;
+    transform-style: flat;
+    isolation: isolate;
+    transform-origin: center bottom;
+}
+
+.tarjeta-interactiva {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    cursor: pointer;
+    border-radius: 20px;
+    box-shadow: 0 0 28px rgba(245, 200, 66, 0.32),
+                0 20px 65px rgba(0, 0, 0, 0.72);
+    transition: transform 2.8s var(--ease-expo),
+                box-shadow 0.5s ease;
+    will-change: transform;
+}
+
+.tarjeta-interactiva:not([data-animando="true"]):hover {
+    box-shadow: 0 0 50px rgba(245, 200, 66, 0.65),
+                0 30px 75px rgba(0, 0, 0, 0.72),
+                0 0 90px rgba(194, 24, 91, 0.25);
+}
+
+/* Tarjeta especial - bordes animados */
+.tarjeta-especial {
+    box-shadow: 0 0 35px rgba(245, 200, 66, 0.45),
+                0 0 70px rgba(194, 24, 91, 0.3),
+                0 20px 65px rgba(0, 0, 0, 0.72) !important;
+}
+.tarjeta-especial::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 22px;
+    background: linear-gradient(45deg,
+        var(--gold),
+        var(--rosa),
+        var(--aurora-1),
+        var(--gold));
+    background-size: 300% 300%;
+    animation: border-giro 3s linear infinite;
+    z-index: -1;
+    opacity: 0.7;
+}
+@keyframes border-giro {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Caras de la tarjeta */
+.cara {
+    position: absolute; width: 100%; height: 100%;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    border: 1.5px solid rgba(245, 200, 66, 0.6);
+    overflow: hidden;
+    background: #060010;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: 20px;
+}
+.cara img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0.88;
+    transition: transform 0.65s var(--ease-premium), opacity 0.4s, filter 0.4s;
+}
+.tarjeta-interactiva:hover .cara img {
+    transform: scale(1.05);
+    opacity: 0.95;
+    filter: saturate(1.1);
+}
+
+/* Número en la frente */
+.frente-numero {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    font-family: var(--font-elegante);
+    font-size: 1.35rem;
+    color: rgba(245, 200, 66, 0.5);
+    z-index: 2;
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 12px rgba(245, 200, 66, 0.4);
+}
+
+/* Overlay frente */
+.frente-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(4, 0, 18, 0.75) 0%,
+        transparent 45%,
+        rgba(4, 0, 18, 0.18) 100%
+    );
+    z-index: 1;
+}
+.overlay-especial {
+    background: linear-gradient(
+        to top,
+        rgba(139, 30, 63, 0.5) 0%,
+        transparent 40%,
+        rgba(75, 0, 130, 0.2) 100%
+    );
+}
+
+/* Hint "Toca para ver" */
+.frente-hint {
+    position: absolute;
+    bottom: 16px;
+    font-family: var(--font-limpia);
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(245, 200, 66, 0.75);
+    z-index: 2;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.3s, transform 0.3s;
+}
+.tarjeta-interactiva:hover .frente-hint { opacity: 1; transform: translateY(0); }
+
+/* Badge especial animado */
+.badge-especial {
+    position: absolute;
+    bottom: 14px;
+    font-family: var(--font-limpia);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    z-index: 3;
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 14px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(245, 200, 66, 0.35);
+    border-radius: 20px;
+    backdrop-filter: blur(8px);
+    text-transform: uppercase;
+}
+.badge-pulso {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: badge-flash 1.2s ease-in-out infinite;
+    box-shadow: 0 0 8px var(--gold);
+}
+@keyframes badge-flash {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.3; transform: scale(0.7); }
+}
+
+/* Partículas orbitando tarjeta especial */
+.orbita-particulas {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    overflow: visible;
+}
+
+/* Cara dorso */
+.cara.dorso {
+    transform: rotateY(180deg);
+    background: linear-gradient(150deg, #1e0838 0%, #0c0016 55%, #14000a 100%);
+    border-color: rgba(245, 200, 66, 0.55);
+    box-shadow: inset 0 0 60px rgba(245, 200, 66, 0.08),
+                inset 0 0 100px rgba(194, 24, 91, 0.05);
+}
+.dorso-especial {
+    background: linear-gradient(150deg, #240640 0%, #100022 50%, #1e0018 100%) !important;
+}
+
+/* Brillo interno dorso */
+.dorso-brillo {
+    position: absolute;
+    width: 150%; height: 60%;
+    top: -30%; left: -25%;
+    background: radial-gradient(ellipse, rgba(245, 200, 66, 0.055), transparent 60%);
+    animation: girar-brillo 9s linear infinite;
+    pointer-events: none;
+}
+.dorso-brillo-especial {
+    background: radial-gradient(ellipse, rgba(194, 24, 91, 0.12), rgba(245, 200, 66, 0.05) 40%, transparent 70%);
+    animation-duration: 6s;
+}
+@keyframes girar-brillo {
+    0%   { transform: rotate(0deg)   translateX(10%); }
+    100% { transform: rotate(360deg) translateX(10%); }
+}
+
+/* Estrella decorativa dorso */
+.dorso-estrella-deco {
+    position: absolute;
+    top: 14px; right: 16px;
+    font-size: 1.1rem;
+    color: rgba(245, 200, 66, 0.35);
+    animation: girar-destello 8s linear infinite;
+}
+
+/* Contenido dorso */
+.texto-dorso {
+    font-family: var(--font-elegante);
+    font-size: 1.5rem;
+    font-weight: 400;
+    font-style: italic;
+    color: #f0d8f5;
+    text-align: center;
+    line-height: 1.38;
+    margin-bottom: 26px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    position: relative; z-index: 1;
+}
+.icono-festivo {
+    width: 72px; height: 72px;
+    filter: drop-shadow(0 0 14px rgba(245,200,66,0.45));
+    position: relative; z-index: 1;
+}
+
+/* Animaciones íconos */
+.flama {
+    animation: titilar-flama 0.7s ease-in-out infinite alternate;
+    transform-origin: center bottom;
+}
+@keyframes titilar-flama {
+    0%   { transform: scale(1)    skewX(-2deg); opacity: 0.85; }
+    100% { transform: scale(1.15) skewX(2deg);  opacity: 1; }
+}
+.destello-svg { animation: girar-destello 3.5s linear infinite; }
+@keyframes girar-destello { 100% { transform: rotate(360deg); } }
+
+/* Corazón con ondas */
+.corazon-wrapper {
+    position: relative;
+    width: 64px; margin-top: 10px;
+    display: flex; justify-content: center; align-items: center;
+}
+.corazon-pulso {
+    width: 52px; height: 52px;
+    animation: pulso-corazon 1.1s ease-in-out infinite;
+    position: relative; z-index: 2;
+}
+@keyframes pulso-corazon {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(194, 24, 91, 0.8)); }
+}
+.corazon-onda {
+    position: absolute;
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(194, 24, 91, 0.5);
+    animation: onda-corazon 2s ease-out infinite;
+}
+@keyframes onda-corazon {
+    0%   { transform: scale(0.8); opacity: 0.8; }
+    100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* Tarjeta Video */
+.video-sorpresa {
+    width: 100%; border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.75),
+                0 0 30px rgba(194, 24, 91, 0.2);
+    margin-bottom: 14px;
+    position: relative; z-index: 1;
+}
+.mensaje-final { text-align: center; position: relative; z-index: 1; }
+.te-quiero {
+    font-family: var(--font-cursiva);
+    font-size: 2.1rem;
+    color: var(--rosa-suave);
+    margin-bottom: 4px;
+    text-shadow: 0 0 20px rgba(194, 24, 91, 0.6);
+    animation: latir-texto 2s ease-in-out infinite;
+}
+@keyframes latir-texto {
+    0%, 100% { text-shadow: 0 0 20px rgba(194, 24, 91, 0.5); }
+    50%       { text-shadow: 0 0 35px rgba(194, 24, 91, 0.9), 0 0 60px rgba(194, 24, 91, 0.35); }
+}
+.firma-luis {
+    font-family: var(--font-limpia);
+    font-size: 0.78rem;
+    color: var(--gold);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+/* ── Animación Squash & Stretch ── */
+.animacion-squash {
+    animation: aplastamiento 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes aplastamiento {
+    0%   { transform: scaleY(1)    scaleX(1); }
+    18%  { transform: scaleY(0.46) scaleX(1.35); }
+    38%  { transform: scaleY(1.24) scaleX(0.85); }
+    54%  { transform: scaleY(0.87) scaleX(1.09); }
+    70%  { transform: scaleY(1.07) scaleX(0.97); }
+    84%  { transform: scaleY(0.97) scaleX(1.02); }
+    100% { transform: scaleY(1)    scaleX(1); }
+}
+
+/* ── Indicadores de tarjeta ── */
+.card-indicators {
+    display: flex; gap: 10px;
+    margin-top: 18px;
+    z-index: 20;
+    transform: translateZ(30px);
+    align-items: center;
+}
+.card-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    transition: background 0.4s, transform 0.4s, box-shadow 0.4s, width 0.4s;
+}
+.card-dot.active {
+    background: var(--gold);
+    transform: scale(1.5);
+    box-shadow: 0 0 10px var(--gold), 0 0 20px rgba(245, 200, 66, 0.35);
+}
+.card-dot.especial-dot {
+    background: rgba(194, 24, 91, 0.3);
+    border: 1px solid rgba(245, 200, 66, 0.3);
+}
+.card-dot.especial-dot.active {
+    background: linear-gradient(135deg, var(--gold), var(--rosa));
+    box-shadow: 0 0 12px var(--rosa), 0 0 25px rgba(245, 200, 66, 0.4);
+}
+
+/* ── Controles de Galería ── */
+.controles-galeria {
+    position: absolute;
+    bottom: 5vh;
+    display: flex; gap: 52px;
+    z-index: 99999;
+    /* ELIMINADO: transform: translateZ(160px); — rompe hit area en táctil */
+    pointer-events: none;
+}
+@media (max-width: 768px) {
+    .controles-galeria {
+        position: fixed; /* fixed en lugar de absolute para no verse afectado por 3D */
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%); /* centrado simple, sin translateZ */
+        gap: 40px;
+        z-index: 99999;
+        pointer-events: none;
+    }
+}
+
+
+
+
+.btn-flecha {
+    background: rgba(255,255,255,0.04);
+    border: 1.5px solid rgba(245, 200, 66, 0.5);
+    color: var(--gold);
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    cursor: pointer;
+    backdrop-filter: blur(16px);
+    transition: background 0.3s, transform 0.25s var(--ease-bounce), box-shadow 0.3s, border-color 0.3s;
+    pointer-events: auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+    touch-action: manipulation;
+}
+.btn-icon {
+    position: relative; z-index: 1;
+}
+.btn-ripple {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(245, 200, 66, 0.35), transparent 70%);
+    transform: scale(0);
+    transition: transform 0.5s, opacity 0.5s;
+    opacity: 0;
+}
+.btn-flecha:active .btn-ripple {
+    transform: scale(2);
+    opacity: 1;
+    transition: none;
+}
+.btn-flecha:hover {
+    background: rgba(245, 200, 66, 0.1);
+    border-color: var(--gold);
+    transform: scale(1.12);
+    box-shadow: 0 0 22px rgba(245,200,66,0.5), 0 6px 22px rgba(0,0,0,0.5);
+}
+
+/* ════════════════════════════════════════════
+   CONFETI MEJORADO
+════════════════════════════════════════════ */
+.particula-confeti {
+    position: fixed;
+    pointer-events: none;
+    z-index: 10000;
+    will-change: transform, opacity;
+    border-radius: 2px;
+}
+
+/* ════════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════════ */
+@media (max-width: 500px) {
+    .huella-container { width: 96px; height: 96px; border-radius: 20px; }
+    .huella-svg { width: 56px; height: 56px; }
+    .o-ring-1 { width: 120px; height: 120px; }
+    .o-ring-2 { width: 148px; height: 148px; }
+    .pista-lista { font-size: 1.02rem; padding: 16px 22px 16px 32px; }
+    .titulo-elegante { font-size: clamp(1.3rem, 4.5vw, 1.9rem); }
+    /* slot-tarjeta ya está definido en el bloque 768px, no se repite */
+    .controles-galeria { position: fixed; gap: 36px; bottom: 20px; }
+    .btn-flecha { width: 50px; height: 50px; font-size: 1.1rem; }
+    .titulo-sorpresa { font-size: clamp(1.7rem, 6.5vw, 2.4rem); }
+    .subtitulo-galeria { font-size: 0.88rem; }
+    .input-wrapper { width: min(300px, 90vw); }
+    .orbe-login { width: 280px; height: 280px; }
+    .escena-3d { height: 370px; perspective: 600px; }
+}
+
+/* ════════════════════════════════════════════
+   CARÁTULA FLORAL — ESTILO TARJETA DECORATIVA
+════════════════════════════════════════════ */
+
+.cara.frente {
+    background: rgba(255, 255, 255, 0.18) !important;
+    backdrop-filter: blur(18px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Marco dorado interior SVG como pseudo-elemento */
+.cara.frente::before {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border: 1.5px solid rgba(196, 153, 80, 0.55);
+    border-radius: 10px;
+    z-index: 3;
+    pointer-events: none;
+    box-shadow: 0 0 0 1px rgba(196, 153, 80, 0.18);
+}
+
+/* Cortar la imagen al estilo "foto polaroid" centrada */
+.cara.frente img {
+    position: absolute;
+    width: 82%;
+    height: 55%;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    object-fit: cover;
+    border-radius: 6px;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.1);
+    opacity: 1 !important;
+    z-index: 2;
+    transition: transform 0.55s var(--ease-premium), box-shadow 0.4s !important;
+}
+
+.tarjeta-interactiva:hover .cara.frente img {
+    transform: translateX(-50%) scale(1.03) !important;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.12) !important;
+}
+
+/* Overlay limpio para el frente claro */
+.cara.frente .frente-overlay {
+    background: linear-gradient(
+        to top,
+        rgba(253, 242, 232, 0.85) 0%,
+        transparent 40%
+    ) !important;
+    z-index: 3;
+}
+
+.cara.frente .overlay-especial {
+    background: linear-gradient(
+        to top,
+        rgba(248, 232, 240, 0.85) 0%,
+        transparent 40%
+    ) !important;
+}
+
+/* Número en frente oscuro sobre fondo claro */
+.cara.frente .frente-numero {
+    color: rgba(160, 100, 60, 0.5) !important;
+    text-shadow: none !important;
+    z-index: 10;
+    top: 16px;
+    left: 18px;
+    font-size: 1.1rem;
+}
+
+/* Hint "Toca para ver" en tono cálido */
+.cara.frente .frente-hint {
+    color: rgba(160, 100, 60, 0.85) !important;
+    bottom: 12px;
+    z-index: 10;
+    background: rgba(255,255,255,0.6);
+    padding: 3px 12px;
+    border-radius: 20px;
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(196, 153, 80, 0.3);
+}
+
+/* Badge especial en frente claro */
+.cara.frente .badge-especial {
+    color: #b87340 !important;
+    background: rgba(255,255,255,0.7) !important;
+    border-color: rgba(196, 153, 80, 0.4) !important;
+    z-index: 10;
+    bottom: 12px;
+}
+.cara.frente .badge-especial .badge-pulso {
+    background: #C2185B !important;
+    box-shadow: 0 0 8px rgba(194, 24, 91, 0.6) !important;
+}
+
+/* ── Decoración floral SVG en las esquinas del frente ── */
+.floral-corner {
+    position: absolute;
+    z-index: 4;
+    pointer-events: none;
+    opacity: 0.82;
+}
+.floral-corner.tl { top: 0;    left: 0;  transform: none; }
+.floral-corner.tr { top: 0;    right: 0; transform: scaleX(-1); }
+.floral-corner.bl { bottom: 0; left: 0;  transform: scaleY(-1); }
+.floral-corner.br { bottom: 0; right: 0; transform: scale(-1); }
+
+/* ── Texto nombre/subtítulo en la parte inferior del frente ── */
+.frente-label {
+    position: absolute;
+    bottom: 34px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    text-align: center;
+    width: 90%;
+    pointer-events: none;
+}
+.frente-label-titulo {
+    font-family: var(--font-elegante);
+    font-size: 1.2rem;
+    font-style: italic;
+    color: #fff !important; 
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.4) !important;
+    display: block;
+}
+.frente-label-sub {
+    font-family: var(--font-limpia);
+    font-size: 0.58rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.75) !important;
+    display: block;
+    margin-top: 3px;
+    opacity: 0.85;
+}
+
+
+/* ── Foto en el dorso de tarjeta ── */
+.dorso-foto {
+    justify-content: flex-start;
+    padding: 16px 16px 12px;
+}
+.foto-dorso-wrapper {
+    width: 100%;
+    flex: 1;
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 8px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.55),
+                0 0 0 1.5px rgba(245, 200, 66, 0.25);
+}
+.foto-dorso {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+    transition: transform 0.5s var(--ease-premium);
+}
+.dorso-foto:hover .foto-dorso {
+    transform: scale(1.04);
+}
+
+/* ════════════════════════════════════════════
+   FIX MÓVIL — SCROLL, CENTRADO Y ZOOM
+════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+    /* ── Body: scroll vertical, sin perspective que desplace elementos ── */
+    body {
+        overflow-x: hidden;
+        overflow-y: auto;
+        perspective: none;
+        perspective-origin: unset;
+    }
+
+    /* ── Cámara: fluye con el contenido, rompe el flex-row ── */
+    .camara-cinematografica {
+        display: block;
+        height: auto;
+        min-height: 100svh;
+        animation: none;
+        transform: none !important;
+        transform-style: flat;
+    }
+
+    /* ── Tilt wrapper: convertimos a Grid para apilar pantallas ── */
+    .tilt-wrapper {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+        height: auto;
+        min-height: 100svh;
+        transform: none !important;
+        transform-style: flat;
+        overflow: visible;
+    }
+
+    /* ── Pantalla login: columna scrollable centrada ── */
+    .pantalla {
+        grid-area: 1 / 1;
+        width: 100%;
+        position: relative;
+        height: auto;
+        min-height: 100svh;
+        padding: 110px 22px 80px;
+        justify-content: flex-start;
+        gap: 18px;
+        transform: none !important;
+        transform-style: flat;
+        overflow: visible;
+    }
+
+    /* ── Título: altura mínima para evitar saltos al escribir ── */
+    .titulo-elegante {
+        font-size: clamp(1.2rem, 4.5vw, 1.8rem);
+        min-height: 90px;
+        margin-bottom: 8px;
+        transform: none !important;
+    }
+
+    /* ── Neutralizar translateZ en todos los hijos del login ── */
+    .pistas-container,
+    .huella-container,
+    .input-wrapper,
+    .estado-login,
+    .login-dots {
+        transform: none !important;
+    }
+
+    /* ── Pistas: ancho completo, fuente más compacta ── */
+    .pistas-container {
+        max-width: 100%;
+        margin-bottom: 8px;
+    }
+    .pista-lista {
+        font-size: 1rem;
+        padding: 16px 20px 16px 32px;
+    }
+
+    /* ── Huella: centrada, sin desplazamiento ── */
+    .huella-container {
+        width: 100px;
+        height: 100px;
+        border-radius: 20px;
+        margin-bottom: 8px;
+    }
+    .huella-svg { width: 58px; height: 58px; }
+    .o-ring-1   { width: 124px; height: 124px; }
+    .o-ring-2   { width: 152px; height: 152px; }
+
+    /* ── Input: ancho seguro ── */
+    .input-wrapper {
+        width: 100%;
+        max-width: 340px;
+        margin-bottom: 4px;
+    }
+
+    /* ── Galería: superpuesta mediante Grid ── */
+    .pantalla-galeria {
+        grid-area: 1 / 1;
+        width: 100%;
+        position: relative;
+        height: auto;
+        min-height: 100svh;
+        padding: 100px 0 120px;
+    }
+
+    /* ── Carrusel: perspectiva reducida y tarjetas más pequeñas ── */
+    .escena-3d {
+        perspective: 700px;
+        height: 400px;
+        margin-top: 24px;
+    }
+
+    .slot-tarjeta {
+        width: 240px;
+        height: 360px;
+        margin-left: -120px;
+        margin-top: -180px;
+        transform: rotateY(calc(var(--i) * 72deg)) translateZ(220px);
+    }
+
+    /* ── Indicadores y título sorpresa: sin translateZ ── */
+    .card-indicators {
+        transform: none;
+        margin-top: 14px;
+    }
+
+    .titulo-sorpresa {
+        transform: none;
+        font-size: clamp(1.8rem, 6vw, 2.8rem);
+    }
+
+    /* ── Controles de galería: visibles y sobre el carrusel ── */
+    .controles-galeria {
+        bottom: 12px;
+        gap: 40px;
+    }
+    .btn-flecha {
+        width: 50px; height: 50px;
+        font-size: 1.1rem;
+    }
+    /* ── Fase 2: superpuesta mediante Grid al igual que el login y el carrusel ── */
+    .pantalla-isometrica {
+        grid-area: 1 / 1;
+        width: 100%;
+        position: relative;
+        height: auto;
+        min-height: 100svh;
+        padding: 60px 0 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+}
+/* ════ BOTÓN TRANSICIÓN FASE 2 ════ */
+.btn-continuar {
+    display: block;
+    margin: 25px auto 0 auto;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--gold), var(--rosa));
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    font-family: var(--font-limpia);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(194, 24, 91, 0.4);
+    animation: pulso-btn-continuar 2s infinite;
+    transition: transform 0.3s ease;
+}
+.btn-continuar:hover { transform: scale(1.05); }
+@keyframes pulso-btn-continuar {
+    0%, 100% { box-shadow: 0 8px 20px rgba(194, 24, 91, 0.4); }
+    50% { box-shadow: 0 8px 35px rgba(245, 200, 66, 0.7); }
+}
+
+/* ════ ESTILOS FASE 2 (ISOMÉTRICA) ════ */
+.pantalla-isometrica {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transition: opacity 1.2s var(--ease-premium), transform 1.2s var(--ease-premium);
+    z-index: 150;
+}
+.pantalla-isometrica.oculto { opacity: 0; pointer-events: none; transform: scale(0.9) translateZ(-100px); }
+
+.escenario-3d { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; transform-style: preserve-3d; }
+.pantalla-interior { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; display: flex; justify-content: center; align-items: center; }
+
+/* HOJAS Y CHROME BAR */
+.hoja {
+    position: absolute; width: min(820px, 92vw); height: min(520px, 72vh); background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-radius: 22px; padding: 0; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.75s var(--ease-spring), opacity 0.75s var(--ease-expo), filter 0.75s var(--ease-expo), box-shadow 0.75s var(--ease-expo); transform-origin: center center; transform-style: preserve-3d; isolation: isolate;
+}
+.hoja::before { content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px; background: linear-gradient(130deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.1) 28%, transparent 50%, rgba(255,255,255,0.18) 100%); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; z-index: 10; }
+.hoja.active { transform: translate3d(0, 0, 160px) rotateY(0deg) scale(1); z-index: 10; opacity: 1; filter: none; box-shadow: var(--shadow-card); }
+.hoja.stacked-1 { transform: translate3d(-340px, 20px, -80px) rotateY(14deg) rotateX(2deg) scale(0.84); filter: brightness(0.55) blur(1px) saturate(0.8); z-index: 5; opacity: 0.65; cursor: pointer; box-shadow: var(--shadow-deep); }
+.hoja.stacked-2 { transform: translate3d(280px, 40px, -200px) rotateY(-10deg) rotateX(4deg) scale(0.70); filter: brightness(0.40) blur(2px) saturate(0.6); z-index: 2; opacity: 0.45; cursor: pointer; box-shadow: var(--shadow-deep); }
+
+.chrome-bar { height: 44px; background: rgba(0, 0, 0, 0.3); border-radius: 22px 22px 0 0; display: flex; align-items: center; gap: 16px; padding: 0 18px; border-bottom: 1px solid rgba(255,255,255,0.1); position: relative; z-index: 12; flex-shrink: 0; }
+.cb-semaforo { display: flex; gap: 7px; } .cb-dot { width: 12px; height: 12px; border-radius: 50%; } .cb-rojo { background: #ff5f56; } .cb-amarillo { background: #ffbd2e; } .cb-verde { background: #27c93f; }
+.cb-url-wrap { flex: 1; max-width: 360px; margin: 0 auto; background: rgba(0,0,0,0.35); border-radius: 8px; padding: 5px 14px; display: flex; align-items: center; gap: 7px; justify-content: center; } .cb-url-text { font-size: 0.75rem; color: rgba(255,255,255,0.55); }
+
+.hoja-body { flex: 1; display: flex; position: relative; z-index: 2; min-height: 0; }
+.central-absoluto { align-items: center; justify-content: center; perspective: 1400px; }
+.nav-dots { display: flex; gap: 10px; margin-top: 24px; position: relative; z-index: 100; }
+.nav-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); cursor: pointer; transition: all 0.3s; }
+.nav-dot.active { background: var(--accent-neon); transform: scale(1.3); border-color: transparent; box-shadow: 0 0 12px var(--accent-neon); }
+
+/* EL SOBRE Y CARTA */
+#sobre-squash { transform-style: flat; isolation: isolate; }
+.image-container { position: relative; transform-style: preserve-3d; cursor: pointer; width: 340px; height: 220px; border-radius: 6px; box-shadow: 0 12px 28px rgba(0,0,0,0.13); transition: box-shadow 0.3s ease; transform-origin: center center; }
+.cara-frente, .cara-dorso { position: absolute; top: 0; left: 0; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 6px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.55); border: 1px solid rgba(43,42,40,0.06); transform-style: preserve-3d; }
+.cara-frente { z-index: 2; transform: rotateY(0deg); } .cara-dorso { transform: rotateY(180deg); background-color: #E2D1B3; }
+.sobre-aleta-izq { position: absolute; left: 0; top: 0; width: 50%; height: 100%; background: linear-gradient(to right, color-mix(in srgb, #F1E5CD 82%, white) 0%, color-mix(in srgb, #F1E5CD 96%, black) 100%); clip-path: polygon(0 0, 0 100%, 100% 50%); z-index: 3; }
+.sobre-aleta-der { position: absolute; right: 0; top: 0; width: 50%; height: 100%; background: linear-gradient(to left, color-mix(in srgb, #EBE0C5 88%, black) 0%, color-mix(in srgb, #EBE0C5 90%, white) 100%); clip-path: polygon(100% 0, 100% 100%, 0 50%); z-index: 3; }
+.sobre-aleta-inf { position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; background: linear-gradient(to top, color-mix(in srgb, #FAF0DF 92%, black) 0%, color-mix(in srgb, #FAF0DF 94%, white) 100%); clip-path: polygon(0 100%, 100% 100%, 50% 0); z-index: 4; }
+.sobre-aleta-sup { position: absolute; top: 0; left: 0; width: 100%; height: 55%; background: linear-gradient(to bottom, color-mix(in srgb, #FBF5EA 70%, white) 0%, color-mix(in srgb, #FBF5EA 97%, black) 100%); clip-path: polygon(0 0, 100% 0, 50% 100%); z-index: 5; transform-origin: top; transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+.sobre-aleta-sup.abierto { transform: rotateX(180deg); z-index: 1; }
+.sello-sobre { position: absolute; bottom: -5px; left: 50%; transform: translate(-50%, 50%); width: 48px; height: 48px; background-color: var(--accent-neon); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; animation: pulso-sello 1.8s infinite; }
+@keyframes pulso-sello { 0%, 100% { box-shadow: 0 4px 10px rgba(255,61,112,0.3); } 50% { box-shadow: 0 4px 22px rgba(255,61,112,0.65); transform: translate(-50%, 50%) scale(1.05); } }
+
+.carta { position: absolute; bottom: 10px; left: 15px; right: 15px; height: 90%; border-radius: 8px; z-index: 2; padding: 25px 20px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(12px); box-shadow: 0 15px 35px rgba(0,0,0, 0.15); will-change: transform; }
+.carta.asomada { animation: carta-magica 2s cubic-bezier(.22,1,.36,1) forwards; }
+
+/* ── Fecha / encabezado de la carta — sacada del flujo flex ── */
+.carta-top {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    text-align: center;
+    line-height: 1.4;
+}
+@keyframes carta-magica { 0% { transform: translate3d(0, 0, 0); z-index: 2; } 50% { transform: translate3d(0, -110%, 50px) rotateX(0deg); z-index: 10; } 100% { transform: translate3d(0, -2%, 80px) scale(1.05); z-index: 10; filter: drop-shadow(0 18px 32px rgba(0,0,0,0.38)); } }
+.carta-texto { font-family: var(--font-elegante); font-size: 1.19rem; font-style: italic; font-weight: 500; color: #3d1f0d; line-height: 1.55; text-align: center; opacity: 0; }
+.carta.asomada .carta-texto { opacity: 1; transition: opacity 0.6s 1.4s; }
+
+/* FIRMA INTERACTIVA CARTA */
+.carta-corazon-final { margin-top: auto; display: flex; justify-content: flex-end; width: 100%; opacity: 0; transform: translateY(10px) translateZ(40px); transition: 0.7s; }
+.carta.escritura-terminada .carta-corazon-final { opacity: 1; transform: translateY(0) translateZ(35px); }
+.firma-contenedor { display: flex; align-items: center; position: relative; }
+.nombre-firma { font-family: var(--font-cursiva); font-size: 2.2rem; color: var(--accent-neon); margin: 0 8px; }
+.flores-sello { width: 45px; cursor: pointer; position: relative; z-index: 60; }
+.corazon-firma-wrapper { position: relative; width: 26px; height: 26px; cursor: pointer; z-index: 50; }
+.corazon-latido-svg { width: 22px; height: 22px; z-index: 2; }
+.corazon-latido-svg path { fill: var(--accent-neon); }
+.carta.escritura-terminada .corazon-latido-svg { animation: heart-beat-pro 1.2s ease-in-out infinite; }
+@keyframes heart-beat-pro { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.25); } 30% { transform: scale(1.05); } 45% { transform: scale(1.2); } }
+.cursor-maquina, .cursor-escritura { display: inline-block; width: 2px; height: 20px; background-color: var(--accent-neon); animation: parpadeo-cursor 0.8s infinite; margin-left: 3px; }
+
+/* TELEGRAMA */
+.telegrama-wrapper { position: relative; width: 100%; height: 100%; background: linear-gradient(168deg, #f7ecd8 0%, #f0e0c0 25%, #eedcba 55%, #e8d4ad 80%, #e2ca9e 100%); display: flex; flex-direction: column; overflow: hidden; border-radius: 0 0 22px 22px; }
+.telegrama-header { padding: 22px 28px 16px; border-bottom: 2px solid rgba(100, 60, 10, 0.3); background: linear-gradient(to bottom, rgba(140, 90, 20, 0.14), transparent); }
+.telegrama-header h2 { font-family: var(--font-limpia); font-size: 1.2rem; color: #3d1f00; letter-spacing: 0.2em; opacity: 0; }
+#hoja-1.active .telegrama-header h2 { animation: tg-entrada 0.5s forwards 0.2s; }
+.tel-meta { font-family: monospace; font-size: 0.72rem; color: rgba(80, 45, 5, 0.7); opacity: 0; }
+#hoja-1.active .tel-meta { animation: tg-entrada 0.5s forwards 0.4s; }
+@keyframes tg-entrada { to { opacity: 1; transform: translateY(0); } }
+.telegrama-content { flex: 1; padding: 24px 36px; display: flex; flex-direction: column; }
+.texto-maquina { font-family: var(--font-cursiva); font-size: 1.8rem; color: #2c1400; min-height: 80px; }
+.cuerda-fotos-wrapper { position: relative; width: 100%; margin-top: 30px; display: flex; justify-content: space-between; perspective: 1200px; }
+.cuerda-hilo { position: absolute; top: 12px; left: -5%; width: 110%; height: 30px; border-top: 1.5px dashed rgba(80, 50, 15, 0.6); border-radius: 50%; }
+.foto-colgada { position: relative; width: 22%; transform-origin: top center; opacity: 0; transform: rotateX(-90deg); transform-style: preserve-3d; }
+.foto-colgada.f1 { --z-rot: -6deg; } .foto-colgada.f2 { --z-rot: 4deg; margin-top: 5px; } .foto-colgada.f3 { --z-rot: -3deg; margin-top: 5px; } .foto-colgada.f4 { --z-rot: 7deg; }
+.foto-polaroid { width: 100%; aspect-ratio: 1/1.1; object-fit: cover; background: #fff; padding: 5px 5px 22px 5px; border: 1px solid rgba(0,0,0,0.1); border-radius: 2px; }
+.pinza { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 8px; height: 30px; background: linear-gradient(to right, #cba171, #e0bc94, #cba171); z-index: 2; }
+#hoja-1.active .foto-colgada.f1 { animation: balanceo-3d 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 4.5s forwards; }
+#hoja-1.active .foto-colgada.f2 { animation: balanceo-3d 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 4.7s forwards; }
+#hoja-1.active .foto-colgada.f3 { animation: balanceo-3d 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 4.9s forwards; }
+#hoja-1.active .foto-colgada.f4 { animation: balanceo-3d 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 5.1s forwards; }
+@keyframes balanceo-3d { 0% { opacity: 0; transform: rotateX(-90deg) rotateZ(var(--z-rot)); } 30% { opacity: 1; transform: rotateX(45deg) rotateZ(var(--z-rot)); } 100% { opacity: 1; transform: rotateX(0deg) rotateZ(var(--z-rot)); } }
+.sello-telegrama-wrap {
+    position: absolute;
+    bottom: 18px;
+    right: 22px;
+    opacity: 0;
+    transform: scale(0.4) rotate(18deg);
+    transition: 0.5s;
+    /* ── Glassmorphism ── */
+    background: rgba(255, 255, 255, 0.15);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    padding: 6px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+#hoja-1.active .sello-telegrama-wrap { opacity: 1; transform: scale(1) rotate(-8deg); transition-delay: 3.2s; }
+.sello-telegrama { width: 100px; height: 100px; mix-blend-mode: multiply; }
+#hoja-1.active .sello-telegrama text { animation: rotar-sello 12s linear infinite; transform-origin: 100px 100px; transform-box: fill-box; }
+.snoopy-mobile-gif { display: none; z-index: 5; position: absolute; top: 12px; right: 18px; width: 60px; opacity: 0; transform: rotate(12deg); mix-blend-mode: multiply; }
+
+/* SMARTPHONE */
+.smartphone { position: relative; width: 250px; height: 520px; border-radius: 38px; background: linear-gradient(160deg, #2a2a2e 0%, #1c1c20 30%, #141416 100%); box-shadow: inset 0 0 0 5px #06060a, 0 40px 80px rgba(0,0,0,0.75); transform: translateY(30px) scale(0.95); opacity: 0; transition: 0.7s; z-index: 10; }
+#hoja-2.active .smartphone { transform: translateY(0) scale(1); opacity: 1; transition-delay: 0.15s; }
+.sp-notch { position: absolute; top: 5px; left: 50%; transform: translateX(-50%); width: 105px; height: 25px; background: #000; border-radius: 0 0 14px 14px; z-index: 20; }
+.sp-screen { position: absolute; inset: 5px; border-radius: 33px; background: #0f0f14; overflow: hidden; display: flex; flex-direction: column; }
+.sp-chat-header { display: flex; align-items: center; padding: 38px 14px 10px; background: rgba(18,18,22,0.82); backdrop-filter: blur(14px); color: #fff; z-index: 10; }
+.sp-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #ff8fab, var(--accent-neon)); display: flex; align-items: center; justify-content: center; margin-right: 10px; }
+.sp-name { flex: 1; font-family: var(--font-limpia); font-size: 0.88rem; font-weight: 600; } .sp-name span { display: block; font-size: 0.62rem; color: var(--accent-mint); }
+.sp-chat-area { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 14px; overflow: hidden; }
+.sp-messages-container { padding: 12px 14px 0; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; scrollbar-width: none; }
+.sp-msg-item { display: none; }
+.sp-msg-item.show { display: flex; animation: sp-aparecer-msg 0.45s forwards; }
+@keyframes sp-aparecer-msg { 0% { opacity: 0; transform: translateY(14px); } 100% { opacity: 1; transform: translateY(0); } }
+.sp-bubble { align-self: flex-start; max-width: 85%; background: linear-gradient(135deg, #7c24d4, var(--accent-violet)); padding: 10px 14px 6px; border-radius: 18px 18px 18px 4px; color: #fff; font-size: 0.86rem; }
+.sp-bubble-img { padding: 4px; background: rgba(255,255,255,0.1); border-radius: 18px 18px 18px 4px; }
+.sp-img { width: 100%; max-height: 170px; object-fit: cover; border-radius: 14px 14px 14px 2px; }
+.sp-meta { display: flex; justify-content: flex-end; gap: 5px; font-size: 0.62rem; opacity: 0.7; margin-top: 5px; }
+.sp-typing { align-self: flex-start; background: rgba(255,255,255,0.09); padding: 12px 16px; border-radius: 16px 16px 16px 4px; display: none; gap: 5px; }
+.sp-typing.show { display: inline-flex; }
+.burbuja-punto { width: 6px; height: 6px; background: rgba(255,255,255,0.8); border-radius: 50%; animation: sp-bounce-punto 1.3s infinite ease-in-out both; }
+.burbuja-punto:nth-child(2) { animation-delay: 0.2s; } .burbuja-punto:nth-child(3) { animation-delay: 0.4s; }
+@keyframes sp-bounce-punto { 0%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-6px); background: var(--accent-violet); } }
+
+/* ════════════════════════════════════════════════════════════════
+   SMARTPHONE — HARDWARE, PANTALLA, UI & MICRO-INTERACCIONES
+   Añadir / reemplazar bajo el comentario  /* SMARTPHONE */  en
+   estilos.css. Paleta oscura coherente con las variables de :root.
+════════════════════════════════════════════════════════════════ */
+
+
+/* ────────────────────────────────────────────────────────────────
+   § 1 · CHASIS TITANIO — BOTONES FÍSICOS LATERALES
+   Se usan los pseudo-elementos del .smartphone para renderizar
+   hardware sin añadir nodos extra al DOM.
+──────────────────────────────────────────────────────────────── */
+
+/* Botón de bloqueo (lado derecho) */
+.smartphone::after {
+    content: '';
+    position: absolute;
+    right: -4px;          /* sale del borde derecho del chasis    */
+    top: 28%;
+    width: 4px;
+    height: 56px;
+    border-radius: 0 3px 3px 0;
+    background: linear-gradient(180deg,
+        #111     0%,
+        #252528  40%,
+        #1a1a1c  70%,
+        #111     100%
+    );
+    box-shadow:
+        inset -1px 0 0 rgba(255,255,255,0.07),  /* borde brillo derecho */
+        inset  1px 0 0 rgba(0,0,0,0.5),          /* sombra interior izq  */
+        2px 0 6px rgba(0,0,0,0.6);               /* sombra de profundidad */
+}
+
+/* Botones de volumen (lado izquierdo) — doble píldora */
+.smartphone::before {
+    content: '';
+    position: absolute;
+    left: -4px;           /* sale del borde izquierdo del chasis  */
+    top: 24%;
+    width: 4px;
+    height: 80px;         /* cubre los dos botones juntos          */
+    border-radius: 3px 0 0 3px;
+    background: linear-gradient(180deg,
+        #111     0%,
+        #252528  35%,
+        #1e1e21  50%,     /* pequeño hueco visual entre los dos    */
+        #252528  65%,
+        #111     100%
+    );
+    box-shadow:
+        inset 1px 0 0 rgba(255,255,255,0.07),    /* borde brillo izquierdo */
+        inset -1px 0 0 rgba(0,0,0,0.5),           /* sombra interior der    */
+        -2px 0 6px rgba(0,0,0,0.6),               /* sombra de profundidad  */
+        /* línea divisoria entre los dos botones de volumen */
+        0 50% 0 rgba(0,0,0,0.8);
+    /* Simula la separación física con un box-shadow interior */
+    box-shadow:
+        inset 1px 0 0 rgba(255,255,255,0.07),
+        inset -1px 0 0 rgba(0,0,0,0.45),
+        -2px 0 6px rgba(0,0,0,0.55),
+        /* línea divisoria de volumen ▲ / ▼ */
+        inset 0 calc(50% - 0.5px) 0 1px rgba(0,0,0,0.7),
+        inset 0 calc(50% + 0.5px) 0 1px rgba(255,255,255,0.04);
+}
+
+
+/* ────────────────────────────────────────────────────────────────
+   § 2 · NOTCH DINÁMICO — AURICULAR + CÁMARA TRUEDEPTH
+──────────────────────────────────────────────────────────────── */
+
+/* Auricular (píldora oscura, centrado en el notch) */
+.sp-notch::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-60%, -50%);   /* desplazado a la izquierda del círculo */
+    width: 36px;
+    height: 7px;
+    background: #1a1a1c;
+    border-radius: 4px;
+    box-shadow:
+        inset 0 1px 2px rgba(0,0,0,0.9),
+        0 1px 0 rgba(255,255,255,0.04);
+}
+
+/* Cámara TrueDepth (lente circular con gradiente radial) */
+.sp-notch::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 22%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%,
+        #2a2a40  0%,
+        #0d0d14  45%,
+        #000     100%
+    );
+    box-shadow:
+        0 0 0 1.5px #111,
+        0 0 0 2.5px rgba(255,255,255,0.06),
+        inset 0 0 4px rgba(100, 120, 255, 0.15);  /* reflejo azulado del lente */
+}
+
+
+/* ────────────────────────────────────────────────────────────────
+   § 3 · FLASH DE ENCENDIDO DE PANTALLA
+   El JS ya genera el div .sp-flash; este bloque define la animación
+   que se dispara cuando el contenedor padre recibe .active.
+──────────────────────────────────────────────────────────────── */
+
+.sp-flash {
+    position: absolute;
+    inset: 0;
+    z-index: 30;
+    border-radius: inherit;
+    background: #fff;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* La animación se activa cuando #hoja-2 (el padre) tiene .active */
+#hoja-2.active .sp-flash {
+    animation: sp-encendido 0.65s ease-out forwards;
+}
+
+@keyframes sp-encendido {
+    0%   { background: #fff; opacity: 0.75; }
+    40%  { background: #eef0ff; opacity: 0.45; }
+    100% { background: #fff;    opacity: 0;    }
+}
+
+
+/* ────────────────────────────────────────────────────────────────
+   § 4 · REFLEJO DE CRISTAL FRONTAL (GLARE)
+   Simula el volumen del vidrio gorilla con un gradiente traslúcido.
+──────────────────────────────────────────────────────────────── */
+
+.sp-glare {
+    position: absolute;
+    inset: 0;
+    z-index: 25;
+    border-radius: 38px;
+    pointer-events: none;
+    overflow: hidden;
+
+    /* Gradiente translúcido que simula el relieve del vidrio */
+    background: linear-gradient(
+        20deg,
+        rgba(255,255,255,0.00)  0%,
+        rgba(255,255,255,0.06) 30%,
+        rgba(255,255,255,0.11) 45%,
+        rgba(255,255,255,0.04) 60%,
+        rgba(255,255,255,0.00) 100%
+    );
+
+    /* El gradiente ocupa 200% para que el reflejo atraviese toda la pantalla */
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    transform: rotate(20deg);
+    transform-origin: center center;
+}
+
+
+/* ────────────────────────────────────────────────────────────────
+   § 5 · INDICADOR "EN LÍNEA" — DOT VERDE PULSANTE EN EL AVATAR
+──────────────────────────────────────────────────────────────── */
+
+.sp-avatar {
+    position: relative;   /* necesario para posicionar el ::after  */
+}
+
+.sp-avatar::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #22c55e;                          /* verde estándar online  */
+    border: 1.5px solid #0f0f14;                  /* corte contra el fondo  */
+    animation: sp-online-pulse 2.2s ease-in-out infinite;
+    z-index: 2;
+}
+
+@keyframes sp-online-pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.0);
+    }
+    50% {
+        box-shadow:
+            0 0 0 4px rgba(34, 197, 94, 0.35),
+            0 0 0 8px rgba(34, 197, 94, 0.10);
+    }
+}
+
+
+/* ────────────────────────────────────────────────────────────────
+   § 6 · GRADIENTE DE SCROLL EN EL ÁREA DE CHAT
+   Desvanece los mensajes que suben hacia el borde superior del chat,
+   sin cortar el layout.
+──────────────────────────────────────────────────────────────── */
+
+.sp-chat-area {
+    position: relative;   /* contexto de posicionamiento para el ::before */
+}
+
+.sp-chat-area::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 36px;
+    z-index: 5;
+    pointer-events: none;
+
+    /* De opaco (color del fondo de pantalla) a transparente */
+    background: linear-gradient(
+        to bottom,
+        #0f0f14   0%,
+        transparent 100%
+    );
+}
+
+
+/* ────────────────────────────────────────────────────────────────
+   § 7 · CONFIRMACIONES DE LECTURA — TICKS AZULES (DOBLE VISTO)
+   Estado inicial: verde pálido (enviado).
+   Al mostrarse el mensaje: transición a azul celeste (leído).
+──────────────────────────────────────────────────────────────── */
+
+/* Estado base: mensaje enviado pero no leído */
+.sp-checks {
+    color: rgba(180, 220, 180, 0.55);   /* verde pálido, casi inactivo  */
+    transition:
+        color      0.4s ease,
+        text-shadow 0.4s ease;
+}
+
+/* Al aparecer el mensaje (.show), cambiar a azul con retraso de 1.2s */
+.sp-msg-item.show .sp-checks {
+    color: #60cdff;                      /* azul celeste "leído"          */
+    text-shadow:
+        0 0 6px rgba(96, 205, 255, 0.7),
+        0 0 14px rgba(96, 205, 255, 0.35);
+    transition-delay: 1.2s;             /* simula el tiempo del "visto"   */
+}
+
+
+/* ────────────────────────────────────────────────────────────────
+   § 8 · RESPUESTA HÁPTICA — ANIMACIÓN DE VIBRACIÓN DEL CHASIS
+   El JS añade / quita .vibrating en .smartphone en cada mensaje.
+   Duración: 0.35s con curva snap para simular motor de vibración.
+──────────────────────────────────────────────────────────────── */
+
+.smartphone.vibrating {
+    animation: sp-vibracion 0.35s cubic-bezier(.36, .07, .19, .97) both;
+    /* will-change para forzar capa de composición y suavizar en GPU */
+    will-change: transform;
+}
+
+@keyframes sp-vibracion {
+    0%   { transform: translateY(0)    rotate(0deg);     }
+    10%  { transform: translateY(-2px) rotate(-1.5deg);  }
+    20%  { transform: translateY(1px)  rotate(1.5deg);   }
+    30%  { transform: translateY(-2px) rotate(-1.2deg);  }
+    40%  { transform: translateY(1px)  rotate(1.2deg);   }
+    50%  { transform: translateY(-1px) rotate(-0.8deg);  }
+    60%  { transform: translateY(1px)  rotate(0.8deg);   }
+    70%  { transform: translateY(-1px) rotate(-0.4deg);  }
+    80%  { transform: translateY(0.5px)rotate(0.4deg);   }
+    90%  { transform: translateY(-0.5px) rotate(-0.2deg);}
+    100% { transform: translateY(0)    rotate(0deg);     }
+}
+
+/* Nota: si .smartphone tiene un transform base (scale, translateY)
+   aplicado por la clase .active del padre, puede necesitarse combinar
+   los transforms con una variable CSS para evitar colisiones.
+   Ejemplo seguro para integrar con la regla existente:
+   #hoja-2.active .smartphone.vibrating { animation: sp-vibracion 0.35s ... ; }
+*/
+
+/* SORPRESA FINAL */
+.btn-sorpresa { position: fixed; left: 50%; bottom: 10vh; transform: translateX(-50%) translateY(20px); padding: 14px 28px; background: #fff; color: #3d3d3d; border-radius: 30px; font-family: var(--font-limpia); font-weight: 700; cursor: pointer; opacity: 0; pointer-events: none; transition: 0.6s; z-index: 9550; }
+.btn-sorpresa.show { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); animation: latido-suave 2s infinite 1s; }
+@keyframes latido-suave { 0%, 100% { transform: scale(1) translateX(-50%); } 50% { transform: scale(1.05) translateX(-47.5%); box-shadow: 0 15px 25px rgba(255, 61, 112, 0.4); } }
+.escena-sorpresa { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9500; opacity: 0; pointer-events: none; transition: 0.8s; background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); }
+.escena-sorpresa.activa { opacity: 1; pointer-events: auto; }
+.mensaje-sorpresa { font-family: var(--font-cursiva); font-size: 2.2rem; color: #fff; text-align: center; margin-bottom: 40px; }
+.tarjetas-container { display: flex; gap: 20px; perspective: 1200px; }
+.tarjeta-opcion { width: 220px; height: 130px; cursor: pointer; transform-style: preserve-3d; transition: 0.6s; }
+.tarjeta-opcion:hover { transform: translateY(-10px); }
+.tarjeta-inner { position: relative; width: 100%; height: 100%; text-align: center; transform-style: preserve-3d; transition: 1s; }
+.tarjeta-front, .tarjeta-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 6px; }
+.tarjeta-back { transform: rotateY(180deg); background: #e9e4dc; display: flex; align-items: center; justify-content: center; padding: 15px; }
+.tarjeta-estilo-imagen2 { background: #fff; color: #333; display: flex; flex-direction: column; }
+.mitad-superior { flex: 1; background: #e9e4dc; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.mitad-inferior { height: 35%; display: flex; align-items: center; justify-content: center; border-top: 1px solid rgba(0,0,0,0.06); }
+.letra-cursiva { font-family: var(--font-elegante); font-size: 2.2rem; margin: 0; }
+.subtitulo-elegante { font-family: var(--font-limpia); font-size: 0.6rem; font-weight: 600; letter-spacing: 2px; }
+.texto-resultado { font-size: 0.85rem; line-height: 1.4; font-family: var(--font-limpia); }
+.tarjeta-opcion.seleccionada { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; z-index: 9600; }
+.tarjeta-opcion.seleccionada .tarjeta-inner { transform: rotateY(180deg); }
+.fade-mensaje { opacity: 0; transform: translateY(10px); transition: 0.8s; font-family: var(--font-limpia); font-size: 0.8rem; font-weight: 600; color: #555; }
+.fade-mensaje.mostrar { opacity: 1; transform: translateY(0); }
+.te-quiero-typing { font-family: var(--font-cursiva); font-size: 2.5rem; color: var(--accent-neon); margin-top: 5px; }
+
+@media (max-width: 600px) {
+    .hoja { width: 94vw; height: 68vh; }
+    .hoja.stacked-1 { transform: translate3d(-20px, 14px, -120px) rotateY(8deg) scale(0.88); opacity: 0.55; }
+    .hoja.stacked-2 { transform: translate3d(14px, 28px, -240px) rotateY(-5deg) scale(0.78); opacity: 0.35; }
+    .snoopy-mobile-gif { display: block; }
+    #hoja-1.active .snoopy-mobile-gif { animation: aparecer-snoopy 1.2s ease-out 5.6s forwards; }
+    @keyframes aparecer-snoopy { 0% { opacity: 0; transform: translateY(15px) rotate(-6deg) scale(0.8); } 100% { opacity: 0.85; transform: translateY(0) rotate(-6deg) scale(1); } }
+    .tarjetas-container { width: 100vw; overflow-x: auto; padding: 40px calc(50vw - 110px); scroll-snap-type: x mandatory; }
+    .tarjeta-opcion { flex-shrink: 0; scroll-snap-align: center; }
+
+    /* ── Fix 3: Telegrama demasiado alto en móvil ── */
+    #hoja-1 .telegrama-wrapper {
+        margin-top: 6vh;
+        height: calc(100% - 6vh); /* <--- Esta línea compensa el margen y evita que se corte el fondo */
+    }
+
+    /* ── Fix 5: Altura expandida al seleccionar tarjeta A/B/C en móvil ── */
+    .tarjeta-opcion.seleccionada {
+        height: 340px;
+        position: absolute;
+    }
+}
+/* ════ MICRO-INTERACCIONES FASE 2 ════ */
+/* ════════════════════════════════════════════════════════════════
+   FIXES MÓVIL — FASE 2 ISOMÉTRICA
+   Pegar al final de estilos.css
+   ════════════════════════════════════════════════════════════════
+
+   ÍNDICE
+   ──────────────────────────────────────────────────────────────
+   §A  Flecha-sobre: base (todas las pantallas)
+       @keyframes rebote-flecha
+   §B  Sobre 3D: escala del contenedor #sobre-squash (base)
+   §C  @media (max-width: 600px)
+       §C-1  Modal Sorpresa — fix con :has(.seleccionada)
+       §C-2  .hoja.active — translateZ moderado
+       §C-3  #sobre-squash — escala para encajar en pantalla
+   ──────────────────────────────────────────────────────────────  */
+
+
+/* ════════════════════════════════════════════════════════════════
+   §A · FLECHA-SOBRE  (Base — todas las pantallas)
+   ════════════════════════════════════════════════════════════════
+   Posicionada de forma absoluta sobre el hoja-body, a la izquierda
+   del sobre 3D, con una animación de rebote horizontal para llamar
+   la atención sin distraer del contenido principal.
+   ──────────────────────────────────────────────────────────────── */
+
+.flecha-sobre {
+    /* Anclada en el interior de .hoja-body */
+    position: absolute;
+    left: 10px;
+    top: 30%;
+
+    /* Encima de todo el contenido de la hoja, pero debajo del chrome-bar */
+    z-index: 15;
+
+    /* Agrupamos SVG + label en columna centrada */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+
+    /* No interfiere con los clics del sobre */
+    pointer-events: none;
+
+    /* Animación de rebote horizontal definida abajo */
+    animation: rebote-flecha 1.4s ease-in-out infinite;
+    will-change: transform;
+}
+
+.flecha-sobre-label {
+    font-family: var(--font-cursiva);
+    font-size: 0.85rem;
+    color: var(--accent-neon);
+    text-shadow: 0 0 10px rgba(255, 61, 112, 0.6);
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+}
+
+/* Rebote hacia la derecha (indicando "toca el sobre") */
+@keyframes rebote-flecha {
+    0%, 100% { transform: translateX(0); }
+    50%       { transform: translateX(8px); }
+}
+
+
+/* ════════════════════════════════════════════════════════════════
+   §B · SOBRE 3D — Contenedor base
+   ════════════════════════════════════════════════════════════════
+   Garantizamos que #sobre-squash no crea un contexto 3D separado
+   que rompa la perspectiva de la hoja (ya tenía transform-style: flat).
+   ──────────────────────────────────────────────────────────────── */
+
+/* Sin sobrescritura necesaria en base; el style inline del HTML ya
+   define width/height. Las reglas móviles van en §C-3. */
+
+
+/* ════════════════════════════════════════════════════════════════
+   §C · @media (max-width: 600px)  — FIXES MÓVIL
+   ════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 600px) {
+
+    /* ────────────────────────────────────────────────────────────
+       §C-1 · MODAL SORPRESA — Fix con :has()
+       ────────────────────────────────────────────────────────────
+       PROBLEMA: .escena-sorpresa tiene backdrop-filter, lo que
+       convierte a ese elemento en un containing block para
+       position:fixed de sus descendientes. En móvil, el
+       .tarjetas-container tiene overflow-x:auto y padding lateral
+       para el scroll-snap, por lo que al añadir .seleccionada
+       la tarjeta queda desplazada fuera del viewport.
+
+       SOLUCIÓN:
+       1. Cuando .tarjetas-container contiene una .seleccionada,
+          se elimina el scroll, el padding y el flexbox para que
+          el contendor no interfiera con el centrado.
+       2. .tarjeta-opcion.seleccionada usa position:absolute
+          (no fixed) con las coordenadas relativas a .escena-sorpresa
+          para sortear el bug del containing block de backdrop-filter.
+       ──────────────────────────────────────────────────────────── */
+
+    /*
+     * Convierte .escena-sorpresa en contexto de posicionamiento
+     * explícito para que el absolute de la tarjeta seleccionada
+     * se ancle a ella, no al viewport (donde fixed fallaría).
+     * Ya tiene position:fixed en el CSS base — añadimos solo
+     * las propiedades que permiten el centrado por absolute hijo.
+     */
+    .escena-sorpresa {
+        /* El position:fixed del base se mantiene; solo reforzamos
+           que sus hijos puedan usar position:absolute correctamente */
+        overflow: hidden; /* Evita que la tarjeta desborde los bordes */
+    }
+
+    /*
+     * Cuando la tarjeta ya fue seleccionada:
+     * – Quitamos el scroll horizontal y el padding snap
+     * – Cambiamos display a block para salir del flexbox
+     *   (sin el flex, la tarjeta .seleccionada puede usar
+     *    position:absolute dentro del contenedor sin ser
+     *    empujada por los hermanos)
+     */
+    .tarjetas-container:has(.seleccionada) {
+        display: block;           /* Rompe el flexbox de las 3 tarjetas    */
+        overflow: visible;        /* Elimina el scroll-snap container       */
+        padding: 0;               /* Sin padding lateral de snap-centering  */
+        /* El scroll-snap-type se ignora automáticamente al salir de flex  */
+    }
+
+    /*
+     * Tarjeta seleccionada: centrado mediante position:absolute
+     * dentro del .escena-sorpresa (que tiene position:fixed e inset:0,
+     * equivale a todo el viewport en la práctica).
+     */
+    .tarjeta-opcion.seleccionada {
+        /* Abandonamos fixed para evitar el bug de backdrop-filter   */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);  /* Centrado perfecto      */
+
+        /* Ancho seguro en móvil; en desktop el base (300px) se mantiene */
+        width: 90vw;
+        max-width: 340px;       /* Tope razonable para pantallas medianas  */
+
+        /* Aseguramos que quede por encima de las tarjetas hermanas       */
+        z-index: 9600;
+    }
+
+
+    /* ────────────────────────────────────────────────────────────
+       §C-2 · HOJA ACTIVA — translateZ moderado
+       ────────────────────────────────────────────────────────────
+       PROBLEMA: .hoja.active tiene translate3d(0, 0, 160px) en
+       su definición base. En móvil, sin perspectiva adecuada
+       (el body desactiva perspective en ≤768px), ese Z de 160px
+       produce un zoom excesivo que corta el sobre por los lados.
+
+       SOLUCIÓN: Eliminamos el translateZ y aplicamos un scale
+       ligero para mantener el efecto de "al frente" sin zoom.
+       ──────────────────────────────────────────────────────────── */
+
+    .hoja.active {
+        /*
+         * scale(0.95) mantiene la tarjeta ligeramente más grande
+         * que las apiladas sin provocar el recorte lateral que
+         * causaba translateZ(160px) en pantallas angostas.
+         */
+        transform: translate3d(0, 0, 0) scale(0.95);
+    }
+
+
+    /* ────────────────────────────────────────────────────────────
+       §C-3 · #sobre-squash — Escala para encajar en pantalla
+       ────────────────────────────────────────────────────────────
+       PROBLEMA: El sobre tiene un width fijo de 340px y height de
+       220px definidos inline. En un móvil de ~375px, esto lo deja
+       sin margen y puede desbordarse cuando hay padding o bordes.
+
+       SOLUCIÓN: Reducimos el contenedor con scale(0.85) usando
+       transform-origin:center center para que el punto de anclaje
+       sea el centro de la hoja y no se desplace hacia ningún lado.
+       Usamos scale en lugar de cambiar width/height para preservar
+       las animaciones del sobre que dependen del tamaño fijo.
+       ──────────────────────────────────────────────────────────── */
+
+    #sobre-squash {
+        transform: scale(0.85);
+        transform-origin: center center;
+        /* Compensamos el espacio visual que escala elimina */
+        /* margin es ignorado en contexto translate3d, así que
+           usamos el transform-origin como única palanca de ajuste */
+    }
+
+
+    /* ────────────────────────────────────────────────────────────
+       §C-4 · FLECHA-SOBRE — Ajuste fino en móvil
+       ────────────────────────────────────────────────────────────
+       En pantallas angostas, el sobre escalado al 85% se desplaza
+       levemente al centro; reajustamos la flecha para que no se
+       superponga con la chrome-bar ni con el borde de la hoja.
+       ──────────────────────────────────────────────────────────── */
+
+    .flecha-sobre {
+        /* Centrada horizontalmente bajo el sobre, apuntando arriba   */
+        left: 50%;
+        top: auto;
+        bottom: 12%;
+        transform: translateX(-50%);
+        animation: rebote-flecha-up 1.4s ease-in-out infinite;
+        flex-direction: column;
+    }
+
+    /* Solo el SVG de la flecha gira 180°                             */
+    .flecha-sobre svg {
+        transform: rotate(180deg);
+        order: -1;   /* SVG arriba, label debajo, sin invertir el eje */
+    }
+
+    /* El label no rota — se muestra legible                          */
+    .flecha-sobre .flecha-sobre-label {
+        transform: none;
+        order: 1;
+    }
+
+    @keyframes rebote-flecha-up {
+        0%, 100% { transform: translateX(-50%) translateY(0); }
+        50%       { transform: translateX(-50%) translateY(-8px); }
+    }
+
+} /* fin @media (max-width: 600px) */
+/* Globo de texto interactivo de las flores */
+.tooltip-ramo {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: -20px;
+    width: max-content;
+    max-width: 190px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.7);
+    border-radius: 14px 14px 14px 4px;
+    padding: 9px 13px;
+    font-family: var(--font-cursiva);
+    font-weight: 600;
+    font-size: 15px;
+    color: #3d1f0d;
+    line-height: 1.3;
+    box-shadow: 0 8px 24px rgba(139, 30, 63, 0.18);
+    opacity: 0;
+    transform: translateY(8px) scale(0.9);
+    transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+    z-index: 20;
+}
+.tooltip-ramo.visible { opacity: 1; transform: translateY(0) scale(1); }
+
+/* Destello blanco al tocar la carta */
+.flash-impacto {
+    position: absolute;
+    width: 160px;
+    height: 60px;
+    left: 50%;
+    top: calc(50% - 110px);
+    transform: translate(-50%, -50%) scale(0);
+    background: radial-gradient(ellipse 80% 50%, rgba(255, 255, 255, 0.92) 0%, rgba(255, 200, 100, 0.4) 50%, transparent 80%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 25;
+    animation: flash-golpe 0.22s ease-out forwards;
+}
+@keyframes flash-golpe {
+    0%   { transform: translate(-50%, -50%) scale(0);   opacity: 1; }
+    45%  { transform: translate(-50%, -50%) scale(1.2); opacity: 0.85; }
+    100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
+}
+
+/* Confeti 3D físico del interior de la carta */
+.confeti-corazon {
+    position: absolute; width: 10px; height: 10px; border-radius: 50% 50% 0 0; z-index: 9; pointer-events: none; will-change: transform, opacity;
+}
+.confeti-corazon::after {
+    content: ''; position: absolute; top: 0; left: 50%; width: 100%; height: 100%; border-radius: 50%; background-color: inherit; transform: rotate(90deg);
+}
+
+
+
+
