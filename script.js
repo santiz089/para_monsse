@@ -1180,7 +1180,7 @@ function escribirTextoCore(elementoId, texto, velocidad = 45, signal = null) {
                         setTimeout(async () => {
                             // Fix Bug 5: el texto se escribe primero;
                             // la firma y el corazón se activan SOLO al terminar (await bloquea).
-                            await escribirTextoCore("texto-0", "Desde que llegaste a mi vida, cada pequeño instante a tu lado se ha convertido en mi recuerdo favorito.", 60);
+                            await escribirTextoCore("texto-0", "Tenemos tanto tiempo de conocernos, pero esta Monsse es unica, especial, distinta. Simplemente eres Genial!", 60);
                             carta.classList.add('escritura-terminada'); // ahora sí aparece la firma + corazón
                             await escribirTextoCore("firma-typing", "Luis Angel", 120);
                         }, 2000);
@@ -1249,10 +1249,10 @@ function escribirTextoCore(elementoId, texto, velocidad = 45, signal = null) {
     const RAZONES = [
         "Por tu risa que me desarma 🌹",
         "Por cada detalle que nadie más nota 🌹",
-        "Por ser mi lugar favorito 🌹",
+        "Por ser una bella mujer 🌹",
         "Por hacer extraordinario lo cotidiano 🌹",
-        "Por sorprenderme cada día 🌹",
-        "Por ser mi historia favorita 🌹"
+        "Por que nunca te rindes 🌹",
+        "Por que eres muy inteligente 🌹"
     ];
     let indiceRazon = 0;
     let tooltipTimer;
