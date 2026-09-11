@@ -1183,9 +1183,6 @@ body:has(.btn-flecha:hover) .cursor-ring {
     }
 }
 
-
-
-
 .btn-flecha {
     background: rgba(255,255,255,0.04);
     border: 1.5px solid rgba(245, 200, 66, 0.5);
