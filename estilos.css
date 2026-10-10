@@ -1148,13 +1148,13 @@ body:has(.btn-flecha:hover) .cursor-ring {
     animation: aplastamiento 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 @keyframes aplastamiento {
-    0%   { transform: scaleY(1)    scaleX(1); }
-    18%  { transform: scaleY(0.46) scaleX(1.35); }
-    38%  { transform: scaleY(1.24) scaleX(0.85); }
-    54%  { transform: scaleY(0.87) scaleX(1.09); }
-    70%  { transform: scaleY(1.07) scaleX(0.97); }
-    84%  { transform: scaleY(0.97) scaleX(1.02); }
-    100% { transform: scaleY(1)    scaleX(1); }
+    0%   { transform: scale(var(--squash-base-scale, 1)) scaleY(1)    scaleX(1); }
+    18%  { transform: scale(var(--squash-base-scale, 1)) scaleY(0.46) scaleX(1.35); }
+    38%  { transform: scale(var(--squash-base-scale, 1)) scaleY(1.24) scaleX(0.85); }
+    54%  { transform: scale(var(--squash-base-scale, 1)) scaleY(0.87) scaleX(1.09); }
+    70%  { transform: scale(var(--squash-base-scale, 1)) scaleY(1.07) scaleX(0.97); }
+    84%  { transform: scale(var(--squash-base-scale, 1)) scaleY(0.97) scaleX(1.02); }
+    100% { transform: scale(var(--squash-base-scale, 1)) scaleY(1)    scaleX(1); }
 }
 
 /* ── Indicadores de tarjeta ── */
@@ -1668,6 +1668,9 @@ body:has(.btn-flecha:hover) .cursor-ring {
     position: relative;
     transform-style: flat;
     isolation: isolate;
+    transform-origin: center bottom;
+    --squash-base-scale: 1;
+    transform: scale(var(--squash-base-scale));
 }
 .image-container { position: relative; transform-style: preserve-3d; cursor: pointer; width: 340px; height: 220px; border-radius: 6px; box-shadow: 0 12px 28px rgba(0,0,0,0.13); transition: box-shadow 0.3s ease; transform-origin: center center; }
 .cara-frente, .cara-dorso { position: absolute; top: 0; left: 0; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 6px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.55); border: 1px solid rgba(43,42,40,0.06); transform-style: preserve-3d; }
@@ -2360,8 +2363,9 @@ body:has(.btn-flecha:hover) .cursor-ring {
        ──────────────────────────────────────────────────────────── */
 
     #sobre-squash {
-        transform: scale(0.85);
-        transform-origin: center center;
+        --squash-base-scale: 0.85;
+        transform: scale(var(--squash-base-scale));
+        transform-origin: center bottom;
         /* Compensamos el espacio visual que escala elimina */
         /* margin es ignorado en contexto translate3d, así que
            usamos el transform-origin como única palanca de ajuste */
@@ -2465,14 +2469,7 @@ body:has(.btn-flecha:hover) .cursor-ring {
     100% { transform: translateY(30px); opacity: 0; }
 }
 .flecha-sobre.oculta { opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
-.sobre-aplastado { animation: squash-sobre 0.58s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-@keyframes squash-sobre {
-    0%   { transform: scaleY(1) scaleX(1); }
-    20%  { transform: scaleY(0.82) scaleX(1.15); }
-    45%  { transform: scaleY(1.12) scaleX(0.92); }
-    70%  { transform: scaleY(0.96) scaleX(1.03); }
-    100% { transform: scaleY(1) scaleX(1); }
-}
+.sobre-aplastado { animation: aplastamiento 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 .sello-telegrama-wrap.sello-visible { opacity: 1 !important; transform: scale(1) rotate(-8deg) !important; transition-delay: 0s !important; }
 .letra-trazo { display: inline; opacity: 0; transition: opacity 0.18s ease; }
 .letra-visible { opacity: 1; }

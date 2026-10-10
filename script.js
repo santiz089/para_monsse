@@ -1074,6 +1074,8 @@ function ejecutarCoreografiaCarta(indice) {
         baseRotationY = 0;
         const flecha = $("flecha-sobre");
         if (flecha) flecha.classList.remove("cayendo", "oculta");
+        const squash = $("sobre-squash");
+        if (squash) squash.classList.remove("animacion-squash", "sobre-aplastado");
     }
     for (let i = 1; i < TOTAL_HOJAS; i++) {
         const p = document.getElementById(`texto-${i}`);
@@ -1113,7 +1115,7 @@ function escribirTextoCore(elementoId, texto, velocidad = 45, signal = null) {
     /* COREOGRAFÍAS ESPECÍFICAS */
     async function coreografiaTelegrama() {
         const signal = estado.nuevoControlador("telegrama");
-        const MSG = "Hemos compartido tantas risas y aventuras. Lo mejor de todo es que sé que nuestra historia apenas está comenzando.";
+        const MSG = "Hemos compartido tantas risas y aventuras. Y después de tanto, míranos, aquí seguimos y seguiremos, dando lo mejor de cada uno. Aún nos queda mucha historia!";
         await delay(600);
         if (signal.aborted) return;
         await escribirTextoCore("texto-1", MSG, 42, signal);
@@ -1194,13 +1196,17 @@ function escribirTextoCore(elementoId, texto, velocidad = 45, signal = null) {
                     setTimeout(() => flash.remove(), 250);
                 }
 
-                // Fix Bug 3: detener animación idle antes del squash
-                if (squash) squash.style.animation = 'none';
+                // Fix Bug 3: asegurarse de limpiar estilos inline previos
+                if (squash) squash.style.animation = '';
 
                 if (flecha) flecha.classList.add('cayendo');
-                if (squash) squash.classList.add('sobre-aplastado');
-                await delay(580);
-                if (squash) squash.classList.remove('sobre-aplastado');
+                if (squash) {
+                    squash.classList.remove('animacion-squash', 'sobre-aplastado');
+                    void squash.offsetWidth;
+                    squash.classList.add('animacion-squash');
+                }
+                await delay(630);
+                if (squash) squash.classList.remove('animacion-squash', 'sobre-aplastado');
                 if (flecha) flecha.classList.add('oculta');
 
                 isFlipped = true;
@@ -1240,7 +1246,14 @@ function escribirTextoCore(elementoId, texto, velocidad = 45, signal = null) {
                 setTimeout(() => {
                     if (aleta) aleta.classList.remove('abierto');
                     if (dorso) dorso.classList.remove('revelado');
-                    setTimeout(() => {
+                    setTimeout(async () => {
+                        if (squash) {
+                            squash.classList.remove('animacion-squash', 'sobre-aplastado');
+                            void squash.offsetWidth;
+                            squash.classList.add('animacion-squash');
+                            await delay(630);
+                            squash.classList.remove('animacion-squash', 'sobre-aplastado');
+                        }
                         isFlipped = false; baseRotationY += 1980;
                         imageContainer.style.transition = 'transform 2.8s cubic-bezier(0.22, 1, 0.36, 1)';
                         imageContainer.style.transform = `rotateY(${baseRotationY}deg)`;
@@ -1292,10 +1305,10 @@ function escribirTextoCore(elementoId, texto, velocidad = 45, signal = null) {
     const RAZONES = [
         "Por tu risa que me desarma 🌹",
         "Por cada detalle que nadie más nota 🌹",
-        "Por ser una bella mujer 🌹",
+        "Por ser una gran mujer 🌹",
         "Por hacer extraordinario lo cotidiano 🌹",
         "Por que nunca te rindes 🌹",
-        "Por que eres muy inteligente 🌹"
+        "Y por que eres muy inteligente 🌹"
     ];
     let indiceRazon = 0;
     let tooltipTimer;
