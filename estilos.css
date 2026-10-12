@@ -1735,13 +1735,13 @@ body:has(.btn-flecha:hover) .cursor-ring {
 /* TELEGRAMA */
 .telegrama-wrapper { position: relative; width: 100%; height: 100%; background: linear-gradient(168deg, #f7ecd8 0%, #f0e0c0 25%, #eedcba 55%, #e8d4ad 80%, #e2ca9e 100%); display: flex; flex-direction: column; overflow: hidden; border-radius: 0 0 22px 22px; }
 .telegrama-header { padding: 22px 28px 16px; border-bottom: 2px solid rgba(100, 60, 10, 0.3); background: linear-gradient(to bottom, rgba(140, 90, 20, 0.14), transparent); }
-.telegrama-header h2 { font-family: var(--font-limpia); font-size: 1.2rem; color: #3d1f00; letter-spacing: 0.2em; opacity: 0; }
+.telegrama-header h2 { font-family: var(--font-limpia); font-size: 1.14rem; color: #3d1f00; letter-spacing: 0.2em; opacity: 0; }
 #hoja-1.active .telegrama-header h2 { animation: tg-entrada 0.5s forwards 0.2s; }
-.tel-meta { font-family: monospace; font-size: 0.72rem; color: rgba(80, 45, 5, 0.7); opacity: 0; }
+.tel-meta { font-family: monospace; font-size: 0.684rem; color: rgba(80, 45, 5, 0.7); opacity: 0; }
 #hoja-1.active .tel-meta { animation: tg-entrada 0.5s forwards 0.4s; }
 @keyframes tg-entrada { to { opacity: 1; transform: translateY(0); } }
 .telegrama-content { flex: 1; padding: 24px 36px; display: flex; flex-direction: column; }
-.texto-maquina { font-family: var(--font-cursiva); font-size: 1.8rem; color: #2c1400; min-height: 80px; }
+.texto-maquina, .tg-font { font-family: var(--font-cursiva); font-size: 1.71rem; color: #2c1400; min-height: 80px; line-height: 1.35; }
 .cuerda-fotos-wrapper { position: relative; width: 100%; margin-top: 30px; display: flex; justify-content: space-between; perspective: 1200px; }
 .cuerda-hilo { position: absolute; top: 12px; left: -5%; width: 110%; height: 30px; border-top: 1.5px dashed rgba(80, 50, 15, 0.6); border-radius: 50%; }
 .foto-colgada { position: relative; width: 22%; transform-origin: top center; opacity: 0; transform: rotateX(-90deg); transform-style: preserve-3d; }
@@ -1755,23 +1755,53 @@ body:has(.btn-flecha:hover) .cursor-ring {
 @keyframes balanceo-3d { 0% { opacity: 0; transform: rotateX(-90deg) rotateZ(var(--z-rot)); } 30% { opacity: 1; transform: rotateX(45deg) rotateZ(var(--z-rot)); } 100% { opacity: 1; transform: rotateX(0deg) rotateZ(var(--z-rot)); } }
 .sello-telegrama-wrap {
     position: absolute;
-    bottom: 18px;
-    right: 22px;
+    bottom: 10px;
+    right: 14px;
     opacity: 0;
-    transform: scale(0.4) rotate(18deg);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-    /* ── Glassmorphism ── */
-    background: rgba(255, 255, 255, 0.15);
+    transform: scale(0.3) rotate(18deg);
+    transition: opacity 0.5s ease, transform 0.6s var(--ease-bounce), box-shadow 0.35s ease;
+    /* ── Glassmorphism & Sello estilo físico Pixar ── */
+    background: rgba(255, 255, 255, 0.22);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.35);
     border-radius: 50%;
-    padding: 6px;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    padding: 4px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    cursor: pointer;
+    z-index: 12;
+    transform-origin: center center;
+    touch-action: manipulation;
 }
 #hoja-1.active .sello-telegrama-wrap { opacity: 1; transform: scale(1) rotate(-8deg); transition-delay: 3.2s; }
-.sello-telegrama { width: 100px; height: 100px; mix-blend-mode: multiply; }
-#hoja-1.active .sello-telegrama text { animation: rotar-sello 12s linear infinite; transform-origin: 100px 100px; transform-box: fill-box; }
+.sello-telegrama-wrap:hover,
+.sello-telegrama-wrap.sello-visible:hover {
+    transform: scale(1.08) rotate(-4deg) !important;
+    box-shadow: 0 8px 22px rgba(214, 40, 40, 0.28), 0 2px 8px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    transition-delay: 0s !important;
+}
+.sello-telegrama-wrap:active,
+.sello-telegrama-wrap.sello-visible:active {
+    transform: scale(0.95) rotate(-10deg) !important;
+    transition-duration: 0.15s;
+    transition-delay: 0s !important;
+}
+.sello-telegrama {
+    width: 70px;
+    height: 70px;
+    mix-blend-mode: multiply;
+    display: block;
+    filter: drop-shadow(0 1px 2px rgba(214, 40, 40, 0.2));
+}
+#hoja-1.active .sello-telegrama text {
+    animation: rotar-sello 20s linear infinite;
+    transform-origin: 100px 100px;
+    transform-box: fill-box;
+}
+@keyframes rotar-sello {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
 .snoopy-mobile-gif { display: none; z-index: 5; position: absolute; top: 12px; right: 18px; width: 60px; opacity: 0; transform: rotate(12deg); mix-blend-mode: multiply; }
 
 /* SMARTPHONE */
@@ -2168,6 +2198,17 @@ body:has(.btn-flecha:hover) .cursor-ring {
     #hoja-1 .telegrama-wrapper {
         margin-top: 6vh;
         height: calc(100% - 6vh); /* <--- Esta línea compensa el margen y evita que se corte el fondo */
+    }
+
+    /* ── Sello telegrama adaptado en móvil para no obstruir fotos ── */
+    .sello-telegrama-wrap {
+        bottom: 8px;
+        right: 10px;
+        padding: 3px;
+    }
+    .sello-telegrama {
+        width: 58px;
+        height: 58px;
     }
 
     /* ── Fix 5: Altura expandida al seleccionar tarjeta A/B/C en móvil ── */
