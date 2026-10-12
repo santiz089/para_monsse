@@ -1115,7 +1115,7 @@ function escribirTextoCore(elementoId, texto, velocidad = 45, signal = null) {
     /* COREOGRAFÍAS ESPECÍFICAS */
     async function coreografiaTelegrama() {
         const signal = estado.nuevoControlador("telegrama");
-        const MSG = "Hemos compartido tantas risas y aventuras. Y después de tanto, míranos, aquí seguimos y seguiremos, dando lo mejor de cada uno. Aún queda mucha historia!";
+        const MSG = "Hemos compartido tantas risas y aventuras. Y después de tanto, míranos, aquí seguimos y seguiremos, dando lo mejor de cada uno, Monsse!";
         await delay(600);
         if (signal.aborted) return;
         await escribirTextoCore("texto-1", MSG, 42, signal);
