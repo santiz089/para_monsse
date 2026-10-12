@@ -1115,7 +1115,7 @@ function escribirTextoCore(elementoId, texto, velocidad = 45, signal = null) {
     /* COREOGRAFÍAS ESPECÍFICAS */
     async function coreografiaTelegrama() {
         const signal = estado.nuevoControlador("telegrama");
-        const MSG = "Hemos compartido tantas risas y aventuras. Y después de tanto, míranos, aquí seguimos y seguiremos, dando lo mejor de cada uno. Aún nos queda mucha historia!";
+        const MSG = "Hemos compartido tantas risas y aventuras. Y después de tanto, míranos, aquí seguimos y seguiremos, dando lo mejor de cada uno. Aún queda mucha historia!";
         await delay(600);
         if (signal.aborted) return;
         await escribirTextoCore("texto-1", MSG, 42, signal);
@@ -1307,8 +1307,8 @@ function escribirTextoCore(elementoId, texto, velocidad = 45, signal = null) {
         "Por cada detalle que nadie más nota 🌹",
         "Por ser una gran mujer 🌹",
         "Por hacer extraordinario lo cotidiano 🌹",
-        "Por que nunca te rindes 🌹",
-        "Y por que eres muy inteligente 🌹"
+        "Porque eres muy inteligente 🌹",
+        "Y Porque nunca te rindes. 🌹"
     ];
     let indiceRazon = 0;
     let tooltipTimer;
