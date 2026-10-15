@@ -1157,18 +1157,18 @@ function escribirTextoCore(elementoId, texto, velocidad = 45, signal = null) {
         };
 
         // Secuencia de 6 mensajes con tiempos diferenciados
-        await delay(800);                             if (signal.aborted) return;
-        await mostrarMensaje(msg1, 2200);             if (signal.aborted) return;
+        await delay(1000);                             if (signal.aborted) return;
+        await mostrarMensaje(msg1, 2500);             if (signal.aborted) return;
         await delay(1000);                            if (signal.aborted) return;
-        await mostrarMensaje(msg2, 2600);             if (signal.aborted) return;
+        await mostrarMensaje(msg2, 2700);             if (signal.aborted) return;
         await delay(1000);                            if (signal.aborted) return;
-        await mostrarMensaje(msg3, 2000);             if (signal.aborted) return;
+        await mostrarMensaje(msg3, 2300);             if (signal.aborted) return;
         await delay(1000);                            if (signal.aborted) return;
-        await mostrarMensaje(msg4, 2400);             if (signal.aborted) return;
+        await mostrarMensaje(msg4, 2600);             if (signal.aborted) return;
         await delay(1200);                            if (signal.aborted) return;
-        await mostrarMensaje(msg5, 3000);             if (signal.aborted) return; // foto tarda más
+        await mostrarMensaje(msg5, 3200);             if (signal.aborted) return; // foto tarda más
         await delay(1000);                            if (signal.aborted) return;
-        await mostrarMensaje(msg6, 1800);             if (signal.aborted) return;
+        await mostrarMensaje(msg6, 2000);             if (signal.aborted) return;
         await delay(1500);                            if (signal.aborted) return;
 
         const btn = $("btn-sorpresa");
